@@ -13,7 +13,7 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [ ] Step 6: Polish and publish
 - [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
-**Current step:** Step 3 (built and installed 2026-11-02; waiting for the user's first in-game test)
+**Current step:** Step 3 (2026-11-02: user's in-game test passed; waiting for a loot re-check after the loot table fix, then Step 3 is done)
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
@@ -41,6 +41,7 @@ Library branch `26.3` in `~/Documents/GIT/MajruszLibrary`: compiles, 136 classes
 - **Custom mobs:** Cerberus, Creeperling, Cursed Armor, Giant, Tank are registered but never spawn until Step 4 (`MajruszsDifficulty.isWithoutRenderer`: biome spawns commented out, removed from Undead Army waves, any other spawn cancelled). The Illusioner works now (vanilla renderer).
 - The library's `animations/` + `ResourceLoader` came back (mob attack timing runs on animation callbacks).
 - **Still TODO (Step 4):** shard locator distance item property, Soul Jar soul tint colors and shield overlay, scroll casting arm pose, custom mob models.
+- In-game fixes after the first launches: ResourceLoader created before NetworkHandler; ClassFinder now scans Fabric mod root paths (jar-in-jar); worldgen `configured_feature` → `worldgen/feature` and flattened JSON; advancements `recipe` → `recipes`, background only on roots; **loot tables use `condition` (one object, `all_of` for several), `modifier`, and `type` as the id key — the old `conditions`/`functions`/`function` keys are silently ignored by 26.x.**
 - Test profile: Improved Mobs and Forge Config API Port moved to `~/Documents/curseforge/minecraft/Instances/test/mods-disabled/` (user plays this mod alone for now).
 
 ### Build notes (Step 1)
