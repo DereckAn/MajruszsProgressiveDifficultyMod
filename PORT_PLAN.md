@@ -6,22 +6,34 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 
 - [x] Step 0: Survey (2026-11-02, results in "Survey results" below)
 - [x] Step 1: Build setup (2026-11-02)
-- [ ] Step 2: Library port
+- [x] Step 2: Library port (2026-11-02)
 - [ ] Step 3: Gameplay (first playable version)
 - [ ] Step 4: Custom mobs
 - [ ] Step 5: Blood moon visuals
 - [ ] Step 6: Polish and publish
 - [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
-**Current step:** Step 2 (library port)
+**Current step:** Step 3 (gameplay, first playable version)
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
 - 2026-11-02: user will play this mod **alone** (without Improved Mobs) for now, so keep all config defaults as they are. Merging both mods' logic into one mod is a new Step 7, after Step 6.
 
 ### Known problems
-- The mod can't resolve `com.majruszlibrary:majrusz-library:26.3-7.0.8` until the library compiles and is published (`./gradlew publishToMavenLocal` in the library). The jar-in-jar `include` is therefore untested until Step 2 ends.
-- Compile errors at the end of Step 1: library 476, mod 2,706 (mod counted without the library on the classpath).
+- Jar-in-jar `include` resolves (library is in mavenLocal) but is only proven once the mod builds in Step 3.
+
+### Library port notes (Step 2) — read before Step 3
+Library branch `26.3` in `~/Documents/GIT/MajruszLibrary`: compiles, 136 classes, **24 mixins** (from 71), all checked against the 26.3 jar (method descriptors and every `@At` target). Run the skill's `checkmixins.py` on a copy with `"name (desc)"` spaces removed: it can't parse Majrusz's spacing or `@Mixin( value = X.class, priority = N )` (false "NO METHOD" alarms).
+- **Fabric API instead of mixins:** server start/stop/save/tick, client tick/start, commands, `/reload`, player join, loot drops (`LootTableEvents.MODIFY_DROPS`), tooltips (`ItemTooltipCallback`), HUD (`HudElementRegistry`), use item/block/entity callbacks.
+- **Deferred to Step 4** (`deferred/` in the library, not compiled): `animations/`, `ResourceLoader`/`Resource` (custom model + animation JSON), `MixinHumanoidModel`, `MixinItemInHandRenderer`, `MixinItemColors`, `MixinLivingEntityRenderer` and their events. `ModHelper.load/loadClient` are gone until then, and `EntityHelper.EntityAnimation` + entity animation ticking are stubbed (`TODO(step 4)`).
+- **API changes the mod must follow in Step 3:**
+  - Registration: `GROUP.create( id, key->new X( new Item.Properties().setId( key ) ) )` for items/blocks/entity types (26.x needs the key before construction). Spawn eggs: `ItemHelper.createEgg( TYPE )` (colors gone; each egg needs a texture + `assets/<ns>/items/*.json`).
+  - `AttributeHandler( name, ()->Attributes.X, op )`: attributes are `Holder`s; operations are `ADD_VALUE` / `ADD_MULTIPLIED_BASE` / `ADD_MULTIPLIED_TOTAL`.
+  - `EnchantmentHelper` takes `ResourceKey< Enchantment >` (e.g. `Enchantments.SILK_TOUCH`); `Registries.ENCHANTMENTS` and `Reader.enchantment()` are gone (CurseRandomly needs the registry from the loot context).
+  - `Custom.Advancements.register( id, trigger )`; `Custom.PotionRecipe` and `Custom.ItemProperties` are gone (brewing recipes are JSON in 26.x; the shard locator needs an item model `range_dispatch` property).
+  - `OnGuiOverlaysRegistered.Renderer` gets a `GuiGraphicsExtractor`; `OnRaidDefeated` has a `level`; `CustomParticle` takes a `TextureAtlasSprite` (pass `spriteSet.first()`).
+  - `OnLootingLevelGet` exists but nothing fires it (looting is an enchantment now): the Enderium set's +1 looting needs a new hook.
+- **Behaviour changes in the library:** `VersionChecker` removed (it pointed at the abandoned 1.20.1 update feed); world data moved to `data/majruszsdifficulty/world_data.dat` (1.20.1 worlds not migrated); a fully shield-blocked hit now still fires `OnEntityPreDamaged`.
 
 ### Build notes (Step 1)
 - Both repos are now **single-module Fabric Loom projects** (`src/` = old `common/src` + `fabric/src`); Forge, NeoForge and the CurseForge/Modrinth upload tasks are gone. Branch `26.3` in both (the library branch is local only, no fork yet).
