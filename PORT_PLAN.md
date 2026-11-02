@@ -10,10 +10,10 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [x] Step 3: Gameplay (first playable version) (2026-11-02, tested in-game by the user)
 - [x] Step 4: Custom mobs (2026-11-02, mobs and item visuals tested in-game by the user)
 - [x] Step 5: Blood moon visuals (2026-11-02, tested in-game by the user)
-- [ ] Step 6: Polish and publish
+- [x] Step 6: Polish and publish (2026-11-02: release v26.3-1.9.10, library fork DereckAn/MajruszLibrary)
 - [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
-**Current step:** Step 6 (2026-11-02: cleanup done, mod branch pushed; waiting for the user to fork/push the library and create the release — auto mode blocks creating public repos/releases)
+**Current step:** Step 7 (merge with Improved Mobs) — not planned yet; plan it with the user first
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
@@ -55,7 +55,8 @@ Library branch `26.3` in `~/Documents/GIT/MajruszLibrary`: compiles, 136 classes
 ### Publishing (Step 6)
 - Both repos got README, changelog entry and an MIT `LICENSE` (Majrusz + port). The `custom.update` feed was removed and contact links point at the forks.
 - Mod: `26.3` pushed to `origin` (DereckAn fork). Library: fork as remote `fork` (`origin` stays Majrusz upstream), push `26.3` to `fork`. Never PR the trimmed library upstream.
-- Release: tag `v26.3-1.9.10`, pre-release, jar `build/libs/majruszs-difficulty-fabric-26.3-1.9.10.jar`.
+- Release: tag `v26.3-1.9.10`, pre-release, jar `build/libs/majruszs-difficulty-fabric-26.3-1.9.10.jar` (published by the user).
+- Library fork created by the user: `DereckAn/MajruszLibrary`, remote `fork`, branch `26.3` pushed. Note: `gh repo fork` needs to run inside the library clone (or pass `Majrusz/MajruszLibrary`).
 
 ### Build notes (Step 1)
 - Both repos are now **single-module Fabric Loom projects** (`src/` = old `common/src` + `fabric/src`); Forge, NeoForge and the CurseForge/Modrinth upload tasks are gone. Branch `26.3` in both (the library branch is local only, no fork yet).
