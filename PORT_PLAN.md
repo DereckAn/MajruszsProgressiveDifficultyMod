@@ -5,7 +5,7 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 ## Status
 
 - [x] Step 0: Survey (2026-11-02, results in "Survey results" below)
-- [ ] Step 1: Build setup
+- [x] Step 1: Build setup (2026-11-02)
 - [ ] Step 2: Library port
 - [ ] Step 3: Gameplay (first playable version)
 - [ ] Step 4: Custom mobs
@@ -13,14 +13,26 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [ ] Step 6: Polish and publish
 - [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
-**Current step:** Step 1 (waiting for the user to read the Step 0 summary and decide the Improved Mobs overlaps)
+**Current step:** Step 2 (library port)
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
 - 2026-11-02: user will play this mod **alone** (without Improved Mobs) for now, so keep all config defaults as they are. Merging both mods' logic into one mod is a new Step 7, after Step 6.
 
 ### Known problems
-_(record open issues here)_
+- The mod can't resolve `com.majruszlibrary:majrusz-library:26.3-7.0.8` until the library compiles and is published (`./gradlew publishToMavenLocal` in the library). The jar-in-jar `include` is therefore untested until Step 2 ends.
+- Compile errors at the end of Step 1: library 476, mod 2,706 (mod counted without the library on the classpath).
+
+### Build notes (Step 1)
+- Both repos are now **single-module Fabric Loom projects** (`src/` = old `common/src` + `fabric/src`); Forge, NeoForge and the CurseForge/Modrinth upload tasks are gone. Branch `26.3` in both (the library branch is local only, no fork yet).
+- Versions: Loom 1.19.3, Gradle 9.8.2, Fabric Loader 0.20.1, Fabric API 0.165.0+26.3, Java 25.
+- The old build-time filter that turned `@OnlyIn(Dist.CLIENT)` into Fabric's `@Environment(EnvType.CLIENT)` was applied to the sources once instead.
+- Build order:
+  ```bash
+  cd ~/Documents/GIT/MajruszLibrary && JAVA_HOME=/usr/lib/jvm/java-27-openjdk ./gradlew publishToMavenLocal
+  cd ~/Documents/GIT/MajruszsProgressiveDifficultyMod && JAVA_HOME=/usr/lib/jvm/java-27-openjdk ./gradlew build
+  ```
+- On this machine `grep` is aliased to ugrep; use `command grep` in scripts.
 
 ---
 

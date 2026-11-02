@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "package": "com.majruszsdifficulty.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "minVersion": "0.8",
+  "client": [
+    "MixinBlockEntityWithoutLevelRenderer",
+    "MixinFogRenderer",
+    "MixinLevelRenderer",
+    "MixinLightTexture"
+  ],
+  "mixins": [
+    "IMixinCreeper",
+    "IMixinLootPool",
+    "IMixinLootPoolSingletonContainer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
