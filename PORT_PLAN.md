@@ -7,13 +7,13 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [x] Step 0: Survey (2026-11-02, results in "Survey results" below)
 - [x] Step 1: Build setup (2026-11-02)
 - [x] Step 2: Library port (2026-11-02)
-- [ ] Step 3: Gameplay (first playable version)
+- [x] Step 3: Gameplay (first playable version) (2026-11-02, tested in-game by the user)
 - [ ] Step 4: Custom mobs
 - [ ] Step 5: Blood moon visuals
 - [ ] Step 6: Polish and publish
 - [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
-**Current step:** Step 3 (2026-11-02: user's in-game test passed; waiting for a loot re-check after the loot table fix, then Step 3 is done)
+**Current step:** Step 4 (custom mobs)
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
