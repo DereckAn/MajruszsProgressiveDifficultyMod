@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.items;
 
+import java.util.Map;
+import java.util.WeakHashMap;
 import net.minecraft.world.phys.Vec3;
 import com.majruszlibrary.item.ItemHelper;
 import net.fabricmc.api.EnvType;
@@ -40,6 +42,8 @@ public class EnderiumShardLocator extends Item {
 
 	@Environment( EnvType.CLIENT )
 	public static class Client {
+		private static final Map< ItemStack, ItemInfo > SCAN_CACHE = new WeakHashMap<>();
+
 		public static float getShardDistance( ItemStack itemStack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed ) {
 			if( !( entity instanceof Player player ) || level == null ) {
 				return 1.0f;
@@ -49,14 +53,14 @@ public class EnderiumShardLocator extends Item {
 				return 1.0f;
 			}
 
-			ItemInfo itemInfo = new ItemInfo();
-			ItemHelper.updateCustomTag( itemStack, customTag->Serializables.modify( itemInfo, customTag, info->{
-				if( itemInfo.position != null && !EnderiumShardLocator.isOre( level, itemInfo.position ) ) {
-					info.position = null;
-				}
-				info.position = Client.findNearestOre( level, player, info );
-				info.counter = ( info.counter + 1 ) % ( 2 * OFFSET );
-			} ) );
+			// 26.x: the scan state lives in client memory; writing it into the stack's data every frame would make
+			// the game treat the item as changed each frame
+			ItemInfo itemInfo = SCAN_CACHE.computeIfAbsent( itemStack, stack->new ItemInfo() );
+			if( itemInfo.position != null && !EnderiumShardLocator.isOre( level, itemInfo.position ) ) {
+				itemInfo.position = null;
+			}
+			itemInfo.position = Client.findNearestOre( level, player, itemInfo );
+			itemInfo.counter = ( itemInfo.counter + 1 ) % ( 2 * OFFSET );
 
 			if( itemInfo.position == null ) {
 				return 1.0f;

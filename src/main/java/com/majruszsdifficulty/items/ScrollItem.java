@@ -86,6 +86,5 @@ public abstract class ScrollItem extends Item {
 
 	protected abstract SoundEvent getCastSound();
 
-	// TODO(step 4): ScrollItem.Client (arm pose + first-person bob while casting) needs the 26.x humanoid render state;
-	// the 1.20.1 code is in deferred/step4/ScrollItemClient.java
+	// arm pose + first-person bob while casting: mixin/MixinHumanoidModel, mixin/MixinFirstPersonHandsAndItemsRenderer
 }

@@ -1,5 +1,6 @@
 package com.majruszsdifficulty;
 
+import com.majruszsdifficulty.client.ItemModelExtensions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import com.majruszlibrary.emitter.ParticleEmitter;
@@ -245,6 +246,8 @@ public class MajruszsDifficulty {
 	@Environment( EnvType.CLIENT )
 	public static class Client {
 		static {
+			ItemModelExtensions.register();
+
 			HELPER.create( Custom.ModelLayers.class, modelLayers->{
 				modelLayers.register( CerberusRenderer.LAYER, ()->CerberusModel.MODEL.get().toLayerDefinition() );
 				modelLayers.register( CursedArmorRenderer.LAYER, ()->CursedArmorModel.MODEL.get().toLayerDefinition() );

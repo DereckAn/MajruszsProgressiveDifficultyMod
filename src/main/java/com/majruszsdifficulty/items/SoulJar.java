@@ -248,8 +248,6 @@ public class SoulJar extends Item {
 	@Environment( EnvType.CLIENT )
 	public static class Client {
 		static {
-			// TODO(step 4): soul colors on the jar texture need 26.x item model tint sources (was OnItemRenderColorsGet)
-
 			OnItemAttributeTooltip.listen( Client::addTooltip )
 				.addCondition( data->SoulJar.canHaveSouls( data.itemStack ) )
 				.addCondition( data->Side.getLocalPlayer() != null /* compatibility check */ );

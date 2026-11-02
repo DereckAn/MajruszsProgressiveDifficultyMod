@@ -1,6 +1,24 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "majruszsdifficulty:item/soul_jar"
+    "model": "majruszsdifficulty:item/soul_jar",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 16777215
+      },
+      {
+        "type": "majruszsdifficulty:soul_color",
+        "index": 0
+      },
+      {
+        "type": "majruszsdifficulty:soul_color",
+        "index": 1
+      },
+      {
+        "type": "majruszsdifficulty:soul_color",
+        "index": 2
+      }
+    ]
   }
 }
