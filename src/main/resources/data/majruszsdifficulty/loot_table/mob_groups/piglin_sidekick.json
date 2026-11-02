@@ -13,19 +13,15 @@
           "type": "minecraft:item",
           "name": "minecraft:golden_sword",
           "weight": 20,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
         }
       ],
-      "conditions": [
-        {
-          "chance": 0.4,
-          "condition": "minecraft:random_chance"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.4
+      }
     }
   ]
 }

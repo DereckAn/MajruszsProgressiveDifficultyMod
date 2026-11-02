@@ -13,11 +13,9 @@
           "type": "minecraft:item",
           "name": "minecraft:wooden_pickaxe",
           "weight": 10,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
         },
         {
           "type": "minecraft:item",
@@ -28,11 +26,9 @@
           "type": "minecraft:item",
           "name": "minecraft:stone_pickaxe",
           "weight": 5,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
         },
         {
           "type": "minecraft:item",
@@ -43,19 +39,15 @@
           "type": "minecraft:item",
           "name": "minecraft:iron_pickaxe",
           "weight": 2,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
         }
       ],
-      "conditions": [
-        {
-          "chance": 0.75,
-          "condition": "minecraft:random_chance"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.75
+      }
     },
     {
       "rolls": 1,
@@ -81,12 +73,10 @@
           "weight": 10
         }
       ],
-      "conditions": [
-        {
-          "chance": 0.6,
-          "condition": "minecraft:random_chance"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.6
+      }
     }
   ]
 }

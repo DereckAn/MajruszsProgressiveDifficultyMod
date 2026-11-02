@@ -7,9 +7,9 @@
         {
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_helmet",
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:set_damage",
+              "type": "minecraft:set_damage",
               "damage": {
                 "type": "minecraft:uniform",
                 "max": 0.5,
@@ -18,7 +18,7 @@
               "add": false
             },
             {
-              "function": "minecraft:enchant_randomly"
+              "type": "minecraft:enchant_randomly"
             }
           ]
         }
@@ -30,9 +30,9 @@
         {
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_chestplate",
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:set_damage",
+              "type": "minecraft:set_damage",
               "damage": {
                 "type": "minecraft:uniform",
                 "max": 0.5,
@@ -41,7 +41,7 @@
               "add": false
             },
             {
-              "function": "minecraft:enchant_randomly"
+              "type": "minecraft:enchant_randomly"
             }
           ]
         }
@@ -53,9 +53,9 @@
         {
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_leggings",
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:set_damage",
+              "type": "minecraft:set_damage",
               "damage": {
                 "type": "minecraft:uniform",
                 "max": 0.5,
@@ -64,7 +64,7 @@
               "add": false
             },
             {
-              "function": "minecraft:enchant_randomly"
+              "type": "minecraft:enchant_randomly"
             }
           ]
         }
@@ -76,9 +76,9 @@
         {
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_boots",
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:set_damage",
+              "type": "minecraft:set_damage",
               "damage": {
                 "type": "minecraft:uniform",
                 "max": 0.5,
@@ -87,7 +87,7 @@
               "add": false
             },
             {
-              "function": "minecraft:enchant_randomly"
+              "type": "minecraft:enchant_randomly"
             }
           ]
         }

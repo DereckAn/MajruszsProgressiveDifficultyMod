@@ -9,26 +9,23 @@
           "name": "majruszsdifficulty:infernal_sponge",
           "weight": 2,
           "quality": 4,
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 4,
-                "max": 8
-              }
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "min": 4,
+              "max": 8
             }
-          ]
+          }
         },
         {
           "type": "minecraft:item",
           "name": "majruszsdifficulty:wither_sword",
           "weight": 1,
           "quality": 4,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
         }
       ]
     },

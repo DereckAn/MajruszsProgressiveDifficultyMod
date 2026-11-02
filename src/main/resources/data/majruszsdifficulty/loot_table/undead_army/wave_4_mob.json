@@ -8,25 +8,23 @@
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_helmet",
           "weight": 60,
-          "functions": [
-            {
-              "function": "minecraft:set_damage",
-              "damage": {
-                "type": "minecraft:uniform",
-                "max": 0.5,
-                "min": 0.25
-              },
-              "add": false
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:set_damage",
+            "damage": {
+              "type": "minecraft:uniform",
+              "max": 0.5,
+              "min": 0.25
+            },
+            "add": false
+          }
         },
         {
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_helmet",
           "weight": 40,
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:set_damage",
+              "type": "minecraft:set_damage",
               "damage": {
                 "type": "minecraft:uniform",
                 "max": 0.5,
@@ -35,17 +33,15 @@
               "add": false
             },
             {
-              "function": "minecraft:enchant_randomly"
+              "type": "minecraft:enchant_randomly"
             }
           ]
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:random_chance",
-          "chance": 0.85
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.85
+      }
     },
     {
       "rolls": 1,
@@ -54,25 +50,23 @@
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_chestplate",
           "weight": 60,
-          "functions": [
-            {
-              "function": "minecraft:set_damage",
-              "damage": {
-                "type": "minecraft:uniform",
-                "max": 0.5,
-                "min": 0.25
-              },
-              "add": false
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:set_damage",
+            "damage": {
+              "type": "minecraft:uniform",
+              "max": 0.5,
+              "min": 0.25
+            },
+            "add": false
+          }
         },
         {
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_chestplate",
           "weight": 40,
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:set_damage",
+              "type": "minecraft:set_damage",
               "damage": {
                 "type": "minecraft:uniform",
                 "max": 0.5,
@@ -81,17 +75,15 @@
               "add": false
             },
             {
-              "function": "minecraft:enchant_randomly"
+              "type": "minecraft:enchant_randomly"
             }
           ]
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:random_chance",
-          "chance": 0.85
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.85
+      }
     },
     {
       "rolls": 1,
@@ -100,25 +92,23 @@
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_leggings",
           "weight": 60,
-          "functions": [
-            {
-              "function": "minecraft:set_damage",
-              "damage": {
-                "type": "minecraft:uniform",
-                "max": 0.5,
-                "min": 0.25
-              },
-              "add": false
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:set_damage",
+            "damage": {
+              "type": "minecraft:uniform",
+              "max": 0.5,
+              "min": 0.25
+            },
+            "add": false
+          }
         },
         {
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_leggings",
           "weight": 40,
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:set_damage",
+              "type": "minecraft:set_damage",
               "damage": {
                 "type": "minecraft:uniform",
                 "max": 0.5,
@@ -127,17 +117,15 @@
               "add": false
             },
             {
-              "function": "minecraft:enchant_randomly"
+              "type": "minecraft:enchant_randomly"
             }
           ]
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:random_chance",
-          "chance": 0.85
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.85
+      }
     },
     {
       "rolls": 1,
@@ -146,25 +134,23 @@
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_boots",
           "weight": 60,
-          "functions": [
-            {
-              "function": "minecraft:set_damage",
-              "damage": {
-                "type": "minecraft:uniform",
-                "max": 0.5,
-                "min": 0.25
-              },
-              "add": false
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:set_damage",
+            "damage": {
+              "type": "minecraft:uniform",
+              "max": 0.5,
+              "min": 0.25
+            },
+            "add": false
+          }
         },
         {
           "type": "minecraft:item",
           "name": "majruszsdifficulty:tattered_boots",
           "weight": 40,
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:set_damage",
+              "type": "minecraft:set_damage",
               "damage": {
                 "type": "minecraft:uniform",
                 "max": 0.5,
@@ -173,17 +159,15 @@
               "add": false
             },
             {
-              "function": "minecraft:enchant_randomly"
+              "type": "minecraft:enchant_randomly"
             }
           ]
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:random_chance",
-          "chance": 0.85
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.85
+      }
     }
   ]
 }

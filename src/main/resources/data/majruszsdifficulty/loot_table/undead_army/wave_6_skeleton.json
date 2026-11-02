@@ -16,9 +16,9 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:bow",
-          "functions": [
+          "modifier": [
             {
-              "function": "minecraft:set_damage",
+              "type": "minecraft:set_damage",
               "damage": {
                 "type": "minecraft:uniform",
                 "max": 0.5,
@@ -27,7 +27,7 @@
               "add": false
             },
             {
-              "function": "minecraft:enchant_randomly"
+              "type": "minecraft:enchant_randomly"
             }
           ]
         }

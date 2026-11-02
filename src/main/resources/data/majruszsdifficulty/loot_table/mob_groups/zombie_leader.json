@@ -22,19 +22,15 @@
           "type": "minecraft:item",
           "name": "minecraft:iron_helmet",
           "weight": 75,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
         }
       ],
-      "conditions": [
-        {
-          "chance": 0.67,
-          "condition": "minecraft:random_chance"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.67
+      }
     },
     {
       "rolls": 1,
@@ -48,19 +44,15 @@
           "type": "minecraft:item",
           "name": "minecraft:iron_chestplate",
           "weight": 75,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
         }
       ],
-      "conditions": [
-        {
-          "chance": 0.67,
-          "condition": "minecraft:random_chance"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.67
+      }
     },
     {
       "rolls": 1,
@@ -74,19 +66,15 @@
           "type": "minecraft:item",
           "name": "minecraft:iron_leggings",
           "weight": 75,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
         }
       ],
-      "conditions": [
-        {
-          "chance": 0.67,
-          "condition": "minecraft:random_chance"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.67
+      }
     },
     {
       "rolls": 1,
@@ -100,19 +88,15 @@
           "type": "minecraft:item",
           "name": "minecraft:iron_boots",
           "weight": 75,
-          "functions": [
-            {
-              "function": "minecraft:enchant_randomly"
-            }
-          ]
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
         }
       ],
-      "conditions": [
-        {
-          "chance": 0.67,
-          "condition": "minecraft:random_chance"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.67
+      }
     }
   ]
 }
