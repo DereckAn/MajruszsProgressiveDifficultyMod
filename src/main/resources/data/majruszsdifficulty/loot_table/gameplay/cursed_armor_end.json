@@ -1,0 +1,81 @@
+{
+  "type": "minecraft:gift",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_helmet",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_chestplate",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_leggings",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_boots",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_axe",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:shield",
+          "condition": {
+            "type": "minecraft:random_chance",
+            "chance": 0.75
+          },
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    }
+  ]
+}

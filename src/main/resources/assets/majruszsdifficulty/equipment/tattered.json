@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "majruszsdifficulty:tattered"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "majruszsdifficulty:tattered"
+      }
+    ]
+  }
+}

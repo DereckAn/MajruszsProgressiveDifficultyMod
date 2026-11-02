@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "majruszsdifficulty:enderium"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "majruszsdifficulty:enderium"
+      }
+    ]
+  }
+}

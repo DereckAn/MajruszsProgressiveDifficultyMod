@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:gift",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "majruszsdifficulty:undead_army/wave_5_mob"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bow",
+          "condition": {
+            "type": "minecraft:random_chance",
+            "chance": 0.4
+          },
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.5,
+                "min": 0.25
+              },
+              "add": false
+            },
+            {
+              "type": "minecraft:enchant_randomly"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

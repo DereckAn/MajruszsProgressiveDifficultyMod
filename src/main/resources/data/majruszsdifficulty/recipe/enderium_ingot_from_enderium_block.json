@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "enderium_ingot",
+  "ingredients": [
+    "majruszsdifficulty:enderium_block"
+  ],
+  "result": {
+    "count": 9,
+    "id": "majruszsdifficulty:enderium_ingot"
+  }
+}

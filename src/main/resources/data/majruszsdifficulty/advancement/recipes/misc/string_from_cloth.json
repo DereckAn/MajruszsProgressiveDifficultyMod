@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "majruszsdifficulty:string_from_cloth"
+    ]
+  },
+  "criteria": {
+    "has_cloth": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "majruszsdifficulty:cloth"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipes": "majruszsdifficulty:string_from_cloth"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_cloth",
+      "has_the_recipe"
+    ]
+  ]
+}

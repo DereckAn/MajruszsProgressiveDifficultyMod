@@ -1,0 +1,81 @@
+{
+  "type": "minecraft:gift",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_helmet",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_chestplate",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_leggings",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_boots",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_sword",
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:shield",
+          "condition": {
+            "type": "minecraft:random_chance",
+            "chance": 0.75
+          },
+          "modifier": {
+            "type": "majruszsdifficulty:curse_randomly"
+          }
+        }
+      ]
+    }
+  ]
+}

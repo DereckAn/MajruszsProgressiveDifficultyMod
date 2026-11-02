@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:gift",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_sword",
+          "weight": 80
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_sword",
+          "weight": 20,
+          "modifier": {
+            "type": "minecraft:enchant_randomly"
+          }
+        }
+      ],
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.4
+      }
+    }
+  ]
+}

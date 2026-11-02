@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "com.majruszsdifficulty.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "minVersion": "0.8",
+  "client": [
+    "MixinClientLevel",
+    "MixinFirstPersonHandsAndItemsRenderer",
+    "MixinHumanoidModel",
+    "MixinShieldSpecialRenderer",
+    "MixinSkyRenderer"
+  ],
+  "mixins": [
+    "IMixinCreeper",
+    "IMixinLootTable",
+    "IMixinUniformContainerBase"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

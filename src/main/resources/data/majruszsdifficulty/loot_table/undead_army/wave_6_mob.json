@@ -1,0 +1,97 @@
+{
+  "type": "minecraft:gift",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "majruszsdifficulty:tattered_helmet",
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.5,
+                "min": 0.25
+              },
+              "add": false
+            },
+            {
+              "type": "minecraft:enchant_randomly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "majruszsdifficulty:tattered_chestplate",
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.5,
+                "min": 0.25
+              },
+              "add": false
+            },
+            {
+              "type": "minecraft:enchant_randomly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "majruszsdifficulty:tattered_leggings",
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.5,
+                "min": 0.25
+              },
+              "add": false
+            },
+            {
+              "type": "minecraft:enchant_randomly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "majruszsdifficulty:tattered_boots",
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "max": 0.5,
+                "min": 0.25
+              },
+              "add": false
+            },
+            {
+              "type": "minecraft:enchant_randomly"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
