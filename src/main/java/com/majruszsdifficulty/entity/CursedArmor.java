@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.entity;
 
+import net.minecraft.resources.ResourceKey;
 import com.majruszlibrary.animations.Animations;
 import com.majruszlibrary.animations.AnimationsDef;
 import com.majruszlibrary.animations.IAnimableEntity;
@@ -29,7 +30,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -37,15 +38,16 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -66,37 +68,37 @@ public class CursedArmor extends Monster implements IAnimableEntity {
 	private static List< LocationDef > LOCATIONS = List.of(
 		new LocationDef(
 			MajruszsDifficulty.HELPER.getLocation( "gameplay/cursed_armor_dungeon" ),
-			List.of( new ResourceLocation( "chests/simple_dungeon" ) ),
+			List.of( Identifier.parse( "chests/simple_dungeon" ) ),
 			0.5f
 		),
 		new LocationDef(
 			MajruszsDifficulty.HELPER.getLocation( "gameplay/cursed_armor_stronghold" ),
 			List.of(
-				new ResourceLocation( "chests/stronghold_corridor" ),
-				new ResourceLocation( "chests/stronghold_crossing" ),
-				new ResourceLocation( "chests/stronghold_library" )
+				Identifier.parse( "chests/stronghold_corridor" ),
+				Identifier.parse( "chests/stronghold_crossing" ),
+				Identifier.parse( "chests/stronghold_library" )
 			),
 			0.4f
 		),
 		new LocationDef(
 			MajruszsDifficulty.HELPER.getLocation( "gameplay/cursed_armor_portal" ),
-			List.of( new ResourceLocation( "chests/ruined_portal" ) ),
+			List.of( Identifier.parse( "chests/ruined_portal" ) ),
 			1.0f
 		),
 		new LocationDef(
 			MajruszsDifficulty.HELPER.getLocation( "gameplay/cursed_armor_nether" ),
 			List.of(
-				new ResourceLocation( "chests/bastion_bridge" ),
-				new ResourceLocation( "chests/bastion_hoglin_stable" ),
-				new ResourceLocation( "chests/bastion_other" ),
-				new ResourceLocation( "chests/bastion_treasure" ),
-				new ResourceLocation( "chests/nether_bridge" )
+				Identifier.parse( "chests/bastion_bridge" ),
+				Identifier.parse( "chests/bastion_hoglin_stable" ),
+				Identifier.parse( "chests/bastion_other" ),
+				Identifier.parse( "chests/bastion_treasure" ),
+				Identifier.parse( "chests/nether_bridge" )
 			),
 			0.25f
 		),
 		new LocationDef(
 			MajruszsDifficulty.HELPER.getLocation( "gameplay/cursed_armor_end" ),
-			List.of( new ResourceLocation( "chests/end_city_treasure" ) ),
+			List.of( Identifier.parse( "chests/end_city_treasure" ) ),
 			0.5f
 		)
 	);
@@ -149,10 +151,10 @@ public class CursedArmor extends Monster implements IAnimableEntity {
 			.define( "chance", Reader.number(), s->s.chance, ( s, v )->s.chance = v );
 	}
 
-	public static EntityType< CursedArmor > createEntityType() {
+	public static EntityType< CursedArmor > createEntityType( ResourceKey< EntityType< ? > > key ) {
 		return EntityType.Builder.of( CursedArmor::new, MobCategory.MONSTER )
 			.sized( 0.5f, 1.9f )
-			.build( "cursed_armor" );
+			.build( key );
 	}
 
 	public static AttributeSupplier createAttributes() {
@@ -166,7 +168,7 @@ public class CursedArmor extends Monster implements IAnimableEntity {
 			.build();
 	}
 
-	public static boolean checkMonsterSpawnRules( EntityType< ? extends Monster > entityType, ServerLevelAccessor level, MobSpawnType mobSpawnType,
+	public static boolean checkCursedArmorSpawnRules( EntityType< ? extends Monster > entityType, ServerLevelAccessor level, EntitySpawnReason mobSpawnType,
 		BlockPos blockPos, RandomSource random
 	) {
 		return Monster.checkMonsterSpawnRules( entityType, level, mobSpawnType, blockPos, random ) && BloodMoonHelper.isActive();
@@ -182,7 +184,7 @@ public class CursedArmor extends Monster implements IAnimableEntity {
 	}
 
 	@Override
-	public int getExperienceReward() {
+	protected int getBaseExperienceReward( ServerLevel level ) {
 		return 7;
 	}
 
@@ -200,8 +202,9 @@ public class CursedArmor extends Monster implements IAnimableEntity {
 		if( this.animations.isEmpty() ) {
 			this.playAnimation( "assemble" )
 				.addCallback( 27, ()->{
-					if( this.getItemBySlot( EquipmentSlot.CHEST ).getItem() instanceof ArmorItem armorItem ) {
-						SoundEmitter.of( armorItem.getEquipSound() )
+					Equippable equippable = this.getItemBySlot( EquipmentSlot.CHEST ).get( DataComponents.EQUIPPABLE );
+					if( equippable != null ) {
+						SoundEmitter.of( equippable.equipSound().value() )
 							.source( SoundSource.HOSTILE )
 							.position( this.position() )
 							.emit( this.level() );
@@ -240,7 +243,7 @@ public class CursedArmor extends Monster implements IAnimableEntity {
 		this.targetSelector.addGoal( 3, new NearestAttackableTargetGoal<>( this, IronGolem.class, true ) );
 	}
 
-	private static Optional< LocationDef > find( ResourceLocation chestId ) {
+	private static Optional< LocationDef > find( Identifier chestId ) {
 		return LOCATIONS.stream()
 			.filter( locationDef->locationDef.chests.stream().anyMatch( chestId::equals ) )
 			.findFirst();
@@ -294,7 +297,7 @@ public class CursedArmor extends Monster implements IAnimableEntity {
 		} else {
 			Vec3i offset = BlockHelper.getState( level, data.origin )
 				.getOptionalValue( ChestBlock.FACING )
-				.map( Direction::getNormal )
+				.map( Direction::getUnitVec3i )
 				.orElse( new Vec3i( 1, 0, 0 ) );
 			return data.origin.add( offset.getX(), offset.getY(), offset.getZ() );
 		}
@@ -333,11 +336,11 @@ public class CursedArmor extends Monster implements IAnimableEntity {
 	}
 
 	public static class LocationDef {
-		public ResourceLocation loot;
-		public List< ResourceLocation > chests;
+		public Identifier loot;
+		public List< Identifier > chests;
 		public float chance;
 
-		public LocationDef( ResourceLocation loot, List< ResourceLocation > chests, float chance ) {
+		public LocationDef( Identifier loot, List< Identifier > chests, float chance ) {
 			this.loot = loot;
 			this.chests = chests;
 			this.chance = chance;

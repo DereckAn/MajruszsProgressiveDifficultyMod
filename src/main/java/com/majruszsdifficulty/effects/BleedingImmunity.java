@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.effects;
 
+import net.minecraft.server.level.ServerLevel;
 import com.majruszlibrary.entity.EffectHelper;
 import com.majruszlibrary.events.OnEntityEffectCheck;
 import com.majruszsdifficulty.MajruszsDifficulty;
@@ -21,15 +22,17 @@ public class BleedingImmunity extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick( LivingEntity entity, int amplifier ) {}
-
-	@Override
-	public void applyInstantenousEffect( @Nullable Entity source, @Nullable Entity indirectSource, LivingEntity entity, int amplifier, double health ) {
-		entity.removeEffect( MajruszsDifficulty.BLEEDING_EFFECT.get() );
+	public boolean applyEffectTick( ServerLevel level, LivingEntity entity, int amplifier ) {
+		return true;
 	}
 
 	@Override
-	public boolean isDurationEffectTick( int duration, int amplifier ) {
+	public void applyInstantaneousEffect( ServerLevel level, @Nullable Entity source, @Nullable Entity indirectSource, LivingEntity entity, int amplifier, double health ) {
+		entity.removeEffect( EffectHelper.toHolder( MajruszsDifficulty.BLEEDING_EFFECT.get() ) );
+	}
+
+	@Override
+	public boolean shouldApplyEffectTickThisTick( int duration, int amplifier ) {
 		return false;
 	}
 }

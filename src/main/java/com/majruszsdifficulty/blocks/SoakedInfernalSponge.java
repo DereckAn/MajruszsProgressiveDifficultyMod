@@ -1,5 +1,8 @@
 package com.majruszsdifficulty.blocks;
 
+import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.phys.Vec3;
 import com.majruszlibrary.emitter.SoundEmitter;
 import com.majruszlibrary.events.OnBlockPlaced;
 import com.majruszlibrary.events.base.Condition;
@@ -34,15 +37,15 @@ public class SoakedInfernalSponge extends Block {
 			.addCondition( data->data.blockState.is( MajruszsDifficulty.SOAKED_INFERNAL_SPONGE_BLOCK.get() ) );
 	}
 
-	public SoakedInfernalSponge() {
-		super( Properties.of().mapColor( MapColor.NETHER ).strength( 0.6f ).sound( SoundType.GRASS ).lightLevel( x->13 ) );
+	public SoakedInfernalSponge( Properties properties ) {
+		super( properties.mapColor( MapColor.NETHER ).strength( 0.6f ).sound( SoundType.GRASS ).lightLevel( x->13 ) );
 	}
 
 	@Override
-	public void neighborChanged( BlockState blockState, Level level, BlockPos blockPos, Block neighbor, BlockPos neighborPos, boolean p_56806_ ) {
+	protected void neighborChanged( BlockState blockState, Level level, BlockPos blockPos, Block neighbor, @Nullable Orientation orientation, boolean p_56806_ ) {
 		SoakedInfernalSponge.tryToConvert( level, blockPos );
 
-		super.neighborChanged( blockState, level, blockPos, neighbor, neighborPos, p_56806_ );
+		super.neighborChanged( blockState, level, blockPos, neighbor, orientation, p_56806_ );
 	}
 
 	@Override
@@ -83,7 +86,7 @@ public class SoakedInfernalSponge extends Block {
 
 	@Override
 	public void stepOn( Level level, BlockPos blockPos, BlockState blockState, Entity entity ) {
-		if( !entity.isSteppingCarefully() && entity instanceof LivingEntity livingEntity && !EnchantmentHelper.hasFrostWalker( livingEntity ) ) {
+		if( !entity.isSteppingCarefully() && entity instanceof LivingEntity livingEntity ) {
 			entity.hurt( level.damageSources().hotFloor(), 1.0f );
 		}
 
@@ -100,7 +103,7 @@ public class SoakedInfernalSponge extends Block {
 			if( fluidState.is( Fluids.WATER ) || fluidState.is( Fluids.FLOWING_WATER ) ) {
 				level.setBlock( blockPos, MajruszsDifficulty.INFERNAL_SPONGE_BLOCK.get().defaultBlockState(), 2 );
 				SoundEmitter.of( SoundEvents.LAVA_EXTINGUISH )
-					.position( blockPos.getCenter() )
+					.position( Vec3.atCenterOf( blockPos ) )
 					.emit( level );
 				break;
 			}
@@ -108,8 +111,8 @@ public class SoakedInfernalSponge extends Block {
 	}
 
 	public static class Item extends BlockItem {
-		public Item() {
-			super( MajruszsDifficulty.SOAKED_INFERNAL_SPONGE_BLOCK.get(), new Properties().rarity( Rarity.UNCOMMON ).fireResistant() );
+		public Item( Properties properties ) {
+			super( MajruszsDifficulty.SOAKED_INFERNAL_SPONGE_BLOCK.get(), properties.useBlockDescriptionPrefix().rarity( Rarity.UNCOMMON ).fireResistant() );
 		}
 	}
 }

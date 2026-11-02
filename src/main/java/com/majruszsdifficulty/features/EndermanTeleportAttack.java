@@ -12,7 +12,7 @@ import com.majruszsdifficulty.events.base.CustomCondition;
 import com.majruszsdifficulty.gamestage.GameStage;
 import com.majruszsdifficulty.gamestage.GameStageHelper;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Enderman;
 
 public class EndermanTeleportAttack {
 	private static boolean IS_ENABLED = true;
@@ -26,8 +26,8 @@ public class EndermanTeleportAttack {
 			.addCondition( Condition.chanceCRD( ()->CHANCE, ()->IS_SCALED_BY_CRD ) )
 			.addCondition( data->IS_ENABLED )
 			.addCondition( CustomCondition.check( REQUIRED_GAME_STAGE ) )
-			.addCondition( data->data.attacker instanceof EnderMan )
-			.addCondition( data->!data.source.isIndirect() );
+			.addCondition( data->data.attacker instanceof Enderman )
+			.addCondition( data->data.source.isDirect() );
 
 		Serializables.getStatic( Config.Features.class )
 			.define( "enderman_teleport_attack", EndermanTeleportAttack.class );

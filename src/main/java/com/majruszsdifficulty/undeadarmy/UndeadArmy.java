@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.undeadarmy;
 
+import net.minecraft.world.phys.Vec3;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.entity.EntityHelper;
@@ -12,7 +13,7 @@ import com.majruszsdifficulty.gamestage.GameStage;
 import com.majruszsdifficulty.gamestage.GameStageHelper;
 import com.majruszsdifficulty.undeadarmy.events.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,8 +34,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class UndeadArmy {
-	public final ServerBossEvent waveInfo = ( ServerBossEvent )new ServerBossEvent( TextHelper.empty(), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.NOTCHED_10 ).setCreateWorldFog( true );
-	public final ServerBossEvent bossInfo = new ServerBossEvent( TextHelper.empty(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_6 );
+	public final ServerBossEvent waveInfo = ( ServerBossEvent )new ServerBossEvent( UUID.randomUUID(), TextHelper.empty(), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.NOTCHED_10 ).setCreateWorldFog( true );
+	public final ServerBossEvent bossInfo = new ServerBossEvent( UUID.randomUUID(), TextHelper.empty(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_6 );
 	public final List< ServerPlayer > participants = new ArrayList<>();
 	public List< MobInfo > mobsLeft = new ArrayList<>();
 	public GameStage gameStage;
@@ -74,7 +75,7 @@ public class UndeadArmy {
 	}
 
 	public void start( BlockPos position, Direction direction ) {
-		this.gameStage = GameStageHelper.determineGameStage( this.getLevel(), position.getCenter() );
+		this.gameStage = GameStageHelper.determineGameStage( this.getLevel(), Vec3.atCenterOf( position ) );
 		this.position = position;
 		this.direction = direction;
 		this.areEntitiesLoaded = true;
@@ -110,7 +111,7 @@ public class UndeadArmy {
 	}
 
 	public void killAllMobs() {
-		this.forEachSpawnedUndead( Entity::kill );
+		this.forEachSpawnedUndead( entity->entity.kill( this.getLevel() ) );
 		this.mobsLeft.clear();
 	}
 
@@ -128,7 +129,7 @@ public class UndeadArmy {
 	}
 
 	public double distanceTo( BlockPos position ) {
-		return AnyPos.from( position.getCenter() ).dist2d( this.position.getCenter() ).doubleValue();
+		return AnyPos.from( Vec3.atCenterOf( position ) ).dist2d( Vec3.atCenterOf( this.position ) ).doubleValue();
 	}
 
 	public boolean hasFinished() {
@@ -193,7 +194,7 @@ public class UndeadArmy {
 
 	public static class MobInfo {
 		public EntityType< ? > type;
-		public ResourceLocation equipment;
+		public Identifier equipment;
 		public BlockPos position;
 		public boolean isBoss = false;
 		public UUID uuid = null;

@@ -16,7 +16,7 @@ public class MessageSender {
 
 	private static void send( OnUndeadArmyStateChanged data ) {
 		MessageSender.getChatMessage( data.undeadArmy )
-			.ifPresent( message->data.undeadArmy.participants.forEach( participant->participant.displayClientMessage( message, false ) ) );
+			.ifPresent( message->data.undeadArmy.participants.forEach( participant->participant.sendSystemMessage( message ) ) );
 	}
 
 	private static Optional< MutableComponent > getChatMessage( UndeadArmy undeadArmy ) {

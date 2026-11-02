@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.effects.bleeding;
 
+import com.majruszlibrary.entity.EffectHelper;
 import com.majruszlibrary.events.OnItemEaten;
 import com.majruszlibrary.events.OnItemTooltip;
 import com.majruszlibrary.events.base.Condition;
@@ -27,7 +28,7 @@ public class BleedingAppleProtection {
 	}
 
 	private static void cancelBleeding( OnItemEaten data ) {
-		data.entity.removeEffect( MajruszsDifficulty.BLEEDING_EFFECT.get() );
+		data.entity.removeEffect( EffectHelper.toHolder( MajruszsDifficulty.BLEEDING_EFFECT.get() ) );
 	}
 
 	private static void addTooltip( OnItemTooltip data ) {

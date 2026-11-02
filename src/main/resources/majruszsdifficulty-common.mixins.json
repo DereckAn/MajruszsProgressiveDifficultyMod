@@ -6,8 +6,8 @@
   "client": [],
   "mixins": [
     "IMixinCreeper",
-    "IMixinLootPool",
-    "IMixinLootPoolSingletonContainer"
+    "IMixinLootTable",
+    "IMixinUniformContainerBase"
   ],
   "injectors": {
     "defaultRequire": 1

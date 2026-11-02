@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.features;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.collection.DefaultMap;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
@@ -18,7 +19,7 @@ import com.majruszsdifficulty.gamestage.GameStageHelper;
 import com.majruszsdifficulty.gamestage.GameStageValue;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.phys.AABB;
 
@@ -38,7 +39,7 @@ public class CreeperSplitIntoCreeperlings {
 			.addCondition( Condition.chanceCRD( ()->CHANCE, ()->IS_SCALED_BY_CRD ) )
 			.addCondition( data->IS_ENABLED )
 			.addCondition( data->data.explosion.getDirectSourceEntity() != null )
-			.addCondition( data->data.explosion.getDirectSourceEntity().getType().equals( EntityType.CREEPER ) );
+			.addCondition( data->data.explosion.getDirectSourceEntity().getType().equals( EntityTypes.CREEPER ) );
 
 		OnExploded.listen( CreeperSplitIntoCreeperlings::giveAdvancement )
 			.addCondition( Condition.isLogicalServer() )
@@ -65,7 +66,7 @@ public class CreeperSplitIntoCreeperlings {
 		for( int i = 0; i < count; ++i ) {
 			Creeperling creeperling = EntityHelper.createSpawner( MajruszsDifficulty.CREEPERLING_ENTITY, data.getLevel() )
 				.position( AnyPos.from( creeper.blockPosition() ).add( Random.nextVector( -2, 2, -1, 1, -2, 2 ) ).center().vec3() )
-				.mobSpawnType( MobSpawnType.EVENT )
+				.mobSpawnType( EntitySpawnReason.EVENT )
 				.spawn();
 
 			data.skipEntityIf( entity->entity.equals( creeperling ) );

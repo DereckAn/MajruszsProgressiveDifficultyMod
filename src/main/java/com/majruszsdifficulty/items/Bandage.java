@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.items;
 
+import com.majruszlibrary.entity.EffectHelper;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.emitter.SoundEmitter;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Bandage extends Item {
@@ -33,12 +35,12 @@ public class Bandage extends Item {
 	);
 	private final Supplier< List< EffectDef > > effects;
 
-	public static Supplier< Bandage > normal() {
-		return ()->new Bandage( Rarity.COMMON, ()->NORMAL_EFFECTS );
+	public static Function< Properties, Bandage > normal() {
+		return properties->new Bandage( properties, Rarity.COMMON, ()->NORMAL_EFFECTS );
 	}
 
-	public static Supplier< Bandage > golden() {
-		return ()->new Bandage( Rarity.UNCOMMON, ()->GOLDEN_EFFECTS );
+	public static Function< Properties, Bandage > golden() {
+		return properties->new Bandage( properties, Rarity.UNCOMMON, ()->GOLDEN_EFFECTS );
 	}
 
 	static {
@@ -73,14 +75,14 @@ public class Bandage extends Item {
 	}
 
 	private static void removeBleeding( Bandage item, Player player, LivingEntity target ) {
-		if( target.hasEffect( MajruszsDifficulty.BLEEDING_EFFECT.get() ) && player instanceof ServerPlayer serverPlayer ) {
+		if( target.hasEffect( EffectHelper.toHolder( MajruszsDifficulty.BLEEDING_EFFECT.get() ) ) && player instanceof ServerPlayer serverPlayer ) {
 			if( target.equals( serverPlayer ) ) {
 				MajruszsDifficulty.HELPER.triggerAchievement( serverPlayer, "bandage_used" );
 			} else if( item.equals( MajruszsDifficulty.GOLDEN_BANDAGE_ITEM.get() ) ) {
 				MajruszsDifficulty.HELPER.triggerAchievement( serverPlayer, "golden_bandage_used_on_others" );
 			}
 		}
-		target.removeEffect( MajruszsDifficulty.BLEEDING_EFFECT.get() );
+		target.removeEffect( EffectHelper.toHolder( MajruszsDifficulty.BLEEDING_EFFECT.get() ) );
 	}
 
 	private static void addEffectInfo( OnItemTooltip data ) {
@@ -94,8 +96,8 @@ public class Bandage extends Item {
 		data.components.add( TextHelper.translatable( "item.majruszsdifficulty.bandage.effect" ).withStyle( ChatFormatting.BLUE ) );
 	}
 
-	private Bandage( Rarity rarity, Supplier< List< EffectDef > > effects ) {
-		super( new Properties().stacksTo( 16 ).rarity( rarity ) );
+	private Bandage( Properties properties, Rarity rarity, Supplier< List< EffectDef > > effects ) {
+		super( properties.stacksTo( 16 ).rarity( rarity ) );
 
 		this.effects = effects;
 	}

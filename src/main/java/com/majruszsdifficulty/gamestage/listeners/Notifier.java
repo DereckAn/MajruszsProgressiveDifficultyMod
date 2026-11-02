@@ -32,6 +32,6 @@ public class Notifier {
 	}
 
 	private static void send( Player player, GameStage gameStage ) {
-		gameStage.getMessages().forEach( message->player.displayClientMessage( message, false ) );
+		gameStage.getMessages().forEach( message->player.sendSystemMessage( message ) );
 	}
 }

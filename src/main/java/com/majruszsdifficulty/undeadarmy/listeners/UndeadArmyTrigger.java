@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.undeadarmy.listeners;
 
+import net.minecraft.tags.EntityTypeTags;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.entity.EntityHelper;
@@ -9,7 +10,6 @@ import com.majruszsdifficulty.undeadarmy.UndeadArmyConfig;
 import com.majruszsdifficulty.undeadarmy.UndeadArmyHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -17,7 +17,7 @@ public class UndeadArmyTrigger {
 	static {
 		OnEntityDied.listen( UndeadArmyTrigger::update )
 			.addCondition( data->UndeadArmyConfig.KILL_REQUIREMENT > 0 )
-			.addCondition( data->data.target.getMobType() == MobType.UNDEAD )
+			.addCondition( data->data.target.is( EntityTypeTags.UNDEAD ) )
 			.addCondition( data->!UndeadArmyHelper.isPartOfUndeadArmy( data.target ) )
 			.addCondition( data->data.attacker instanceof ServerPlayer )
 			.addCondition( data->EntityHelper.isIn( data.attacker, Level.OVERWORLD ) );

@@ -1,5 +1,8 @@
 package com.majruszsdifficulty.effects;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.EntityTypeTags;
+import com.majruszlibrary.entity.EffectHelper;
 import com.majruszlibrary.entity.EffectDef;
 import com.majruszlibrary.time.TimeHelper;
 import com.majruszsdifficulty.MajruszsDifficulty;
@@ -11,7 +14,6 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.animal.Animal;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +34,7 @@ public class Bleeding extends MobEffect {
 
 	public static boolean canApplyTo( LivingEntity entity ) {
 		return BleedingConfig.IS_APPLICABLE_TO_ANIMALS && entity instanceof Animal && !BleedingConfig.IMMUNE_MOBS.contains( entity.getType() )
-			|| BleedingConfig.IS_APPLICABLE_TO_ILLAGERS && entity instanceof Mob mob && mob.getMobType() == MobType.ILLAGER && !BleedingConfig.IMMUNE_MOBS.contains( entity.getType() )
+			|| BleedingConfig.IS_APPLICABLE_TO_ILLAGERS && entity instanceof Mob mob && mob.is( EntityTypeTags.ILLAGER ) && !BleedingConfig.IMMUNE_MOBS.contains( entity.getType() )
 			|| BleedingConfig.OTHER_APPLICABLE_MOBS.contains( entity.getType() );
 	}
 
@@ -41,13 +43,15 @@ public class Bleeding extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick( LivingEntity entity, int amplifier ) {}
+	public boolean applyEffectTick( ServerLevel level, LivingEntity entity, int amplifier ) {
+		return true;
+	}
 
 	@Override
-	public void applyInstantenousEffect( @Nullable Entity source, @Nullable Entity indirectSource, LivingEntity entity, int amplifier, double health ) {}
+	public void applyInstantaneousEffect( ServerLevel level, @Nullable Entity source, @Nullable Entity indirectSource, LivingEntity entity, int amplifier, double health ) {}
 
 	@Override
-	public boolean isDurationEffectTick( int duration, int amplifier ) {
+	public boolean shouldApplyEffectTickThisTick( int duration, int amplifier ) {
 		return false;
 	}
 
@@ -56,7 +60,7 @@ public class Bleeding extends MobEffect {
 		public final @Nullable Entity damageSourceEntity;
 
 		public MobEffectInstance( int duration, int amplifier, @Nullable LivingEntity attacker ) {
-			super( MajruszsDifficulty.BLEEDING_EFFECT.get(), duration, amplifier, false, false, true );
+			super( EffectHelper.toHolder( MajruszsDifficulty.BLEEDING_EFFECT.get() ), duration, amplifier, false, false, true );
 
 			this.damageSourceEntity = attacker;
 		}

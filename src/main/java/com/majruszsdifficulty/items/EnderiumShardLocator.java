@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.items;
 
+import net.minecraft.world.phys.Vec3;
+import com.majruszlibrary.item.ItemHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import com.majruszlibrary.data.Reader;
@@ -27,8 +29,8 @@ public class EnderiumShardLocator extends Item {
 			.define( "EnderiumShardLocatorCounter", Reader.integer(), s->s.counter, ( s, v )->s.counter = v );
 	}
 
-	public EnderiumShardLocator() {
-		super( new Properties().rarity( Rarity.UNCOMMON ) );
+	public EnderiumShardLocator( Properties properties ) {
+		super( properties.rarity( Rarity.UNCOMMON ) );
 	}
 
 
@@ -48,13 +50,13 @@ public class EnderiumShardLocator extends Item {
 			}
 
 			ItemInfo itemInfo = new ItemInfo();
-			Serializables.modify( itemInfo, itemStack.getOrCreateTag(), info->{
+			ItemHelper.updateCustomTag( itemStack, customTag->Serializables.modify( itemInfo, customTag, info->{
 				if( itemInfo.position != null && !EnderiumShardLocator.isOre( level, itemInfo.position ) ) {
 					info.position = null;
 				}
 				info.position = Client.findNearestOre( level, player, info );
 				info.counter = ( info.counter + 1 ) % ( 2 * OFFSET );
-			} );
+			} ) );
 
 			if( itemInfo.position == null ) {
 				return 1.0f;
@@ -65,13 +67,13 @@ public class EnderiumShardLocator extends Item {
 
 		private static BlockPos findNearestOre( ClientLevel level, Player player, ItemInfo itemInfo ) {
 			BlockPos nearestPosition = itemInfo.position;
-			float nearestDistance = nearestPosition != null ? AnyPos.from( player.position() ).dist( nearestPosition.getCenter() ).floatValue() : OFFSET;
+			float nearestDistance = nearestPosition != null ? AnyPos.from( player.position() ).dist( Vec3.atCenterOf( nearestPosition ) ).floatValue() : OFFSET;
 
 			for( int x = -OFFSET; x < OFFSET; ++x ) {
 				for( int z = -OFFSET; z < OFFSET; ++z ) {
 					BlockPos position = AnyPos.from( player.blockPosition() ).add( x, itemInfo.counter - OFFSET, z ).block();
 					if( EnderiumShardLocator.isOre( level, position ) ) {
-						float distance = AnyPos.from( player.position() ).dist( position.getCenter() ).floatValue();
+						float distance = AnyPos.from( player.position() ).dist( Vec3.atCenterOf( position ) ).floatValue();
 						if( nearestDistance > distance ) {
 							nearestPosition = position;
 							nearestDistance = distance;

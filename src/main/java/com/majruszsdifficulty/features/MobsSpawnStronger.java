@@ -20,8 +20,8 @@ import java.util.List;
 
 public class MobsSpawnStronger {
 	private static boolean IS_ENABLED = true;
-	private static final AttributeHandler HEALTH = new AttributeHandler( "progressive_difficulty_health_bonus", ()->Attributes.MAX_HEALTH, AttributeModifier.Operation.MULTIPLY_BASE );
-	private static final AttributeHandler DAMAGE = new AttributeHandler( "progressive_difficulty_damage_bonus", ()->Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.MULTIPLY_BASE );
+	private static final AttributeHandler HEALTH = new AttributeHandler( "progressive_difficulty_health_bonus", ()->Attributes.MAX_HEALTH, AttributeModifier.Operation.ADD_MULTIPLIED_BASE );
+	private static final AttributeHandler DAMAGE = new AttributeHandler( "progressive_difficulty_damage_bonus", ()->Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADD_MULTIPLIED_BASE );
 	private static GameStageValue< Float > HEALTH_BONUS = GameStageValue.of(
 		DefaultMap.defaultEntry( 0.0f ),
 		DefaultMap.entry( GameStage.EXPERT_ID, 0.15f ),

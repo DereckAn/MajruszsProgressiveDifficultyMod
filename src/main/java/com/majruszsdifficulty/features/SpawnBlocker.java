@@ -12,7 +12,7 @@ import com.majruszsdifficulty.data.Config;
 import com.majruszsdifficulty.gamestage.GameStage;
 import com.majruszsdifficulty.gamestage.GameStageHelper;
 import com.majruszsdifficulty.gamestage.GameStageValue;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +29,7 @@ public class SpawnBlocker {
 		OnEntitySpawned.listen( OnEntitySpawned::cancelSpawn )
 			.addCondition( Condition.isLogicalServer() )
 			.addCondition( data->!data.isLoadedFromDisk )
-			.addCondition( data->data.mobSpawnType == null || data.mobSpawnType.equals( MobSpawnType.NATURAL ) )
+			.addCondition( data->data.mobSpawnType == null || data.mobSpawnType.equals( EntitySpawnReason.NATURAL ) )
 			.addCondition( SpawnBlocker.isForbidden() );
 
 		Serializables.getStatic( Config.Features.class )

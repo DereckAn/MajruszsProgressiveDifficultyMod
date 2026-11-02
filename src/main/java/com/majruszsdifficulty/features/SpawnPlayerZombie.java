@@ -1,5 +1,9 @@
 package com.majruszsdifficulty.features;
 
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.core.component.DataComponents;
+import com.majruszlibrary.entity.EffectHelper;
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.entity.EntityHelper;
@@ -17,8 +21,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -38,7 +42,7 @@ public class SpawnPlayerZombie {
 			.addCondition( data->IS_ENABLED )
 			.addCondition( CustomCondition.check( REQUIRED_GAME_STAGE ) )
 			.addCondition( data->data.target instanceof Player )
-			.addCondition( data->data.target.hasEffect( MajruszsDifficulty.BLEEDING_EFFECT.get() ) || data.attacker instanceof Zombie );
+			.addCondition( data->data.target.hasEffect( EffectHelper.toHolder( MajruszsDifficulty.BLEEDING_EFFECT.get() ) ) || data.attacker instanceof Zombie );
 
 		OnEntityDied.listen( SpawnPlayerZombie::giveAdvancement )
 			.addCondition( data->data.target instanceof Zombie )
@@ -59,10 +63,10 @@ public class SpawnPlayerZombie {
 
 	private static void spawn( OnEntityDied data ) {
 		Player player = ( Player )data.target;
-		EntityType< ? > entityType = data.attacker instanceof Zombie attacker ? attacker.getType() : EntityType.ZOMBIE;
+		EntityType< ? > entityType = data.attacker instanceof Zombie attacker ? attacker.getType() : EntityTypes.ZOMBIE;
 		Entity entity = EntityHelper.createSpawner( ()->entityType, data.getLevel() )
 			.position( AnyPos.from( player.position() ).center().vec3() )
-			.mobSpawnType( MobSpawnType.EVENT )
+			.mobSpawnType( EntitySpawnReason.EVENT )
 			.spawn();
 		if( !( entity instanceof Zombie zombie ) ) {
 			return;
@@ -70,7 +74,7 @@ public class SpawnPlayerZombie {
 
 		if( Random.check( HEAD_CHANCE ) ) {
 			ItemStack playerSkull = new ItemStack( Items.PLAYER_HEAD );
-			playerSkull.getOrCreateTag().putString( "SkullOwner", player.getScoreboardName() );
+			playerSkull.set( DataComponents.PROFILE, ResolvableProfile.createUnresolved( player.getScoreboardName() ) );
 			zombie.setItemSlot( EquipmentSlot.HEAD, playerSkull );
 			zombie.setDropChance( EquipmentSlot.HEAD, HEAD_DROP_CHANCE );
 		}

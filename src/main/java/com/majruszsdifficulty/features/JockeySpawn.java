@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.features;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.entity.EntityHelper;
@@ -11,7 +12,7 @@ import com.majruszsdifficulty.events.base.CustomCondition;
 import com.majruszsdifficulty.gamestage.GameStage;
 import com.majruszsdifficulty.gamestage.GameStageHelper;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.monster.skeleton.Skeleton;
 
 public class JockeySpawn {
 	private static boolean IS_ENABLED = true;
@@ -26,7 +27,7 @@ public class JockeySpawn {
 			.addCondition( data->IS_ENABLED )
 			.addCondition( CustomCondition.check( REQUIRED_GAME_STAGE ) )
 			.addCondition( data->!data.isLoadedFromDisk )
-			.addCondition( data->data.entity.getType() == EntityType.SPIDER );
+			.addCondition( data->data.entity.getType() == EntityTypes.SPIDER );
 
 		Serializables.getStatic( Config.Features.class )
 			.define( "jockey_spawn", JockeySpawn.class );
@@ -39,7 +40,7 @@ public class JockeySpawn {
 	}
 
 	private static void spawnSkeleton( OnEntitySpawned data ) {
-		Skeleton skeleton = EntityHelper.createSpawner( ()->EntityType.SKELETON, data.getServerLevel() ).position( data.entity.position() ).spawn();
+		Skeleton skeleton = EntityHelper.createSpawner( ()->EntityTypes.SKELETON, data.getServerLevel() ).position( data.entity.position() ).spawn();
 		if( skeleton != null ) {
 			skeleton.startRiding( data.entity );
 		}

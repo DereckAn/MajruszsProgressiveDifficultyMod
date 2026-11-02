@@ -8,10 +8,10 @@ import com.majruszlibrary.math.Random;
 import com.majruszlibrary.platform.Side;
 import com.majruszlibrary.time.TimeHelper;
 import com.majruszsdifficulty.MajruszsDifficulty;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.util.ARGB;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
@@ -48,9 +48,8 @@ public class BleedingGui {
 		return Random.next( IntStream.iterate( 0, i->i + 1 ).limit( max ).boxed().collect( Collectors.toList() ), max );
 	}
 
-	private static void render( GuiGraphics graphics, float partialTick, int screenWidth, int screenHeight ) {
-		RenderSystem.setShader( GameRenderer::getPositionTexShader );
-		RenderSystem.enableBlend();
+	// 26.x: GUI drawing takes the tint as an ARGB argument instead of RenderSystem shader state
+	private static void render( GuiGraphicsExtractor graphics, float partialTick, int screenWidth, int screenHeight ) {
 		for( Particle particle : PARTICLES ) {
 			if( particle.hasFinished() ) {
 				continue;
@@ -58,11 +57,9 @@ public class BleedingGui {
 
 			float color = particle.getColor();
 			Particle.RenderData renderData = particle.buildRenderData( screenWidth, screenHeight );
-			RenderSystem.setShaderColor( color, color, color, particle.getAlpha() );
-			RenderSystem.setShaderTexture( 0, renderData.resource );
-			graphics.blit( renderData.resource, renderData.x, renderData.y, 0, 0, renderData.size, renderData.size, renderData.size, renderData.size );
+			int argb = ARGB.colorFromFloat( particle.getAlpha(), color, color, color );
+			graphics.blit( RenderPipelines.GUI_TEXTURED, renderData.resource, renderData.x, renderData.y, 0.0f, 0.0f, renderData.size, renderData.size, renderData.size, renderData.size, argb );
 		}
-		RenderSystem.disableBlend();
 	}
 
 	private static void updateParticles( OnClientTicked data ) {
@@ -73,7 +70,7 @@ public class BleedingGui {
 		static final int ASSETS_COUNT = 7;
 		static final int GRID_WIDTH = 6, GRID_HEIGHT = 4;
 		static final int LIFETIME = TimeHelper.toTicks( 9.0 );
-		static final List< ResourceLocation > ASSETS = new ArrayList<>();
+		static final List< Identifier > ASSETS = new ArrayList<>();
 
 		static {
 			for( int idx = 0; idx < ASSETS_COUNT; ++idx ) {
@@ -132,6 +129,6 @@ public class BleedingGui {
 			++this.ticks;
 		}
 
-		public record RenderData( int x, int y, int size, ResourceLocation resource ) {}
+		public record RenderData( int x, int y, int size, Identifier resource ) {}
 	}
 }

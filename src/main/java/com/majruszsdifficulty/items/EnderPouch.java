@@ -17,8 +17,8 @@ public class EnderPouch extends Item {
 			.addCondition( data->data.itemStack.getItem() instanceof EnderPouch );
 	}
 
-	public EnderPouch() {
-		super( new Properties().stacksTo( 1 ).rarity( Rarity.UNCOMMON ) );
+	public EnderPouch( Properties properties ) {
+		super( properties.stacksTo( 1 ).rarity( Rarity.UNCOMMON ) );
 	}
 
 	private static void openEnderChest( OnPlayerInteracted data ) {
@@ -30,7 +30,7 @@ public class EnderPouch extends Item {
 				.emit( level );
 		}
 
-		Component component = data.itemStack.getItem().getDescription();
+		Component component = Component.translatable( data.itemStack.getItem().getDescriptionId() );
 		data.player.openMenu( new SimpleMenuProvider( ( containerId, inventory, player )->ChestMenu.threeRows( containerId, inventory, player.getEnderChestInventory() ), component ) );
 		data.player.awardStat( Stats.OPEN_ENDERCHEST );
 		data.finish();

@@ -7,7 +7,7 @@ import com.majruszsdifficulty.data.Config;
 import com.majruszsdifficulty.events.base.CustomCondition;
 import com.majruszsdifficulty.gamestage.GameStage;
 import com.majruszsdifficulty.gamestage.GameStageHelper;
-import net.minecraft.world.entity.monster.Illusioner;
+import net.minecraft.world.entity.monster.illager.Illusioner;
 
 public class BlockIllusionerFromJoiningRaids {
 	private static boolean IS_ENABLED = true;

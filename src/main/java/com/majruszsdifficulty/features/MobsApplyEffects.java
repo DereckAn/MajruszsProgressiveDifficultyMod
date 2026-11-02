@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.features;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.entity.EffectDef;
@@ -22,29 +23,29 @@ public class MobsApplyEffects {
 			GameStage.EXPERT_ID,
 			0.25f,
 			true,
-			EntityType.SPIDER,
-			new EffectDef( ()->MobEffects.POISON, 0, 7.0f )
+			EntityTypes.SPIDER,
+			new EffectDef( ()->MobEffects.POISON.value(), 0, 7.0f )
 		),
 		new ExtraEffectDef(
 			GameStage.EXPERT_ID,
 			0.5f,
 			true,
-			EntityType.SLIME,
-			new EffectDef( ()->MobEffects.MOVEMENT_SLOWDOWN, 0, 7.0f )
+			EntityTypes.SLIME,
+			new EffectDef( ()->MobEffects.SLOWNESS.value(), 0, 7.0f )
 		),
 		new ExtraEffectDef(
 			GameStage.MASTER_ID,
 			0.5f,
 			true,
-			EntityType.SHULKER,
-			new EffectDef( ()->MobEffects.BLINDNESS, 0, 7.0f )
+			EntityTypes.SHULKER,
+			new EffectDef( ()->MobEffects.BLINDNESS.value(), 0, 7.0f )
 		),
 		new ExtraEffectDef(
 			GameStage.MASTER_ID,
 			0.75f,
 			true,
-			EntityType.PHANTOM,
-			new EffectDef( ()->MobEffects.LEVITATION, 0, 7.0f )
+			EntityTypes.PHANTOM,
+			new EffectDef( ()->MobEffects.LEVITATION.value(), 0, 7.0f )
 		)
 	);
 

@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -47,7 +47,7 @@ public class UndeadArmyHelper {
 	public static boolean tryToSpawn( BlockPos position, Optional< UndeadArmy.Direction > direction ) {
 		return UndeadArmyConfig.IS_ENABLED
 			&& UndeadArmyHelper.getLevel().getDifficulty() != Difficulty.PEACEFUL
-			&& !UndeadArmyHelper.getLevel().getGameRules().getBoolean( GameRules.RULE_DISABLE_RAIDS )
+			&& UndeadArmyHelper.getLevel().getGameRules().get( GameRules.RAIDS )
 			&& UndeadArmyHelper.findNearestUndeadArmy( position ) == null
 			&& UndeadArmyHelper.setupNewArmy( position, direction );
 	}
@@ -90,10 +90,7 @@ public class UndeadArmyHelper {
 		UNDEAD_ARMIES.forEach( UndeadArmy::tick );
 		boolean hasAnyArmyFinished = UNDEAD_ARMIES.removeIf( UndeadArmy::hasFinished );
 		if( hasAnyArmyFinished && UNDEAD_ARMIES.isEmpty() ) {
-			LevelHelper.setClearWeather( UndeadArmyHelper.getLevel(), TimeHelper.toTicks( 0.5 ) );
-			if( UndeadArmyHelper.getLevel().getLevelData() instanceof ServerLevelData levelData ) {
-				levelData.setClearWeatherTime( TimeHelper.toTicks( 60.0 * 30.0 ) );
-			}
+			LevelHelper.setClearWeather( UndeadArmyHelper.getLevel(), TimeHelper.toTicks( 60.0 * 30.0 ) );
 		}
 	}
 

@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.features;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.events.OnEntitySpawned;
@@ -40,7 +42,7 @@ public class CreeperSpawnCharged {
 
 	private static void charge( OnEntitySpawned data ) {
 		Creeper creeper = ( Creeper )data.entity;
-		LightningBolt lightningBolt = EntityType.LIGHTNING_BOLT.create( data.getServerLevel() );
+		LightningBolt lightningBolt = EntityTypes.LIGHTNING_BOLT.create( data.getServerLevel(), EntitySpawnReason.TRIGGERED );
 		if( lightningBolt != null ) {
 			creeper.thunderHit( data.getServerLevel(), lightningBolt );
 			creeper.clearFire();

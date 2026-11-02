@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.undeadarmy.listeners;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.events.base.Priority;
 import com.majruszlibrary.math.AnyPos;
 import com.majruszsdifficulty.undeadarmy.UndeadArmy;
@@ -23,9 +25,9 @@ public class LightningSpawner {
 		Collections.shuffle( mobsLeft );
 		int count = Math.min( mobsLeft.size(), 3 );
 		for( int idx = 0; idx < count; ++idx ) {
-			LightningBolt lightningBolt = EntityType.LIGHTNING_BOLT.create( data.getLevel() );
+			LightningBolt lightningBolt = EntityTypes.LIGHTNING_BOLT.create( data.getLevel(), EntitySpawnReason.TRIGGERED );
 			if( lightningBolt != null ) {
-				lightningBolt.moveTo( AnyPos.from( mobsLeft.get( idx ).position ).center().vec3() );
+				lightningBolt.snapTo( AnyPos.from( mobsLeft.get( idx ).position ).center().vec3() );
 				lightningBolt.setVisualOnly( true );
 				data.getLevel().addFreshEntity( lightningBolt );
 			}

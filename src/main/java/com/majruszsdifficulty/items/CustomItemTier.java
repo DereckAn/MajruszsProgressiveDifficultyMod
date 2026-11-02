@@ -1,55 +1,15 @@
 package com.majruszsdifficulty.items;
 
 import com.majruszsdifficulty.MajruszsDifficulty;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.ToolMaterial;
 
-import java.util.function.Supplier;
-
-public enum CustomItemTier implements Tier {
-	WITHER( 360, 3, 15, 5.0f, 3.0f, ()->Ingredient.of( MajruszsDifficulty.CERBERUS_FANG_ITEM.get() ) ),
-	ENDERIUM( 2137, 4, 15, 10.0f, 5.0f, ()->Ingredient.of( MajruszsDifficulty.ENDERIUM_INGOT_ITEM.get() ) );
-
-	final int maxUses, harvestLevel, enchantability;
-	final float efficiency, attackDamage;
-	final Supplier< Ingredient > repairMaterial;
-
-	CustomItemTier( int uses, int harvestLevel, int enchantability, float efficiency, float damage, Supplier< Ingredient > material ) {
-		this.maxUses = uses;
-		this.harvestLevel = harvestLevel;
-		this.enchantability = enchantability;
-		this.efficiency = efficiency;
-		this.attackDamage = damage;
-		this.repairMaterial = material;
-	}
-
-	@Override
-	public int getUses() {
-		return this.maxUses;
-	}
-
-	@Override
-	public float getSpeed() {
-		return this.efficiency;
-	}
-
-	@Override
-	public float getAttackDamageBonus() {
-		return this.attackDamage;
-	}
-
-	@Override
-	public int getLevel() {
-		return this.harvestLevel;
-	}
-
-	@Override
-	public int getEnchantmentValue() {
-		return this.enchantability;
-	}
-
-	@Override
-	public Ingredient getRepairIngredient() {
-		return this.repairMaterial.get();
-	}
+// 26.x: Tier became the ToolMaterial record; harvest level 3 = diamond, 4 = netherite; repair items are tags
+public interface CustomItemTier {
+	ToolMaterial WITHER = new ToolMaterial( BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 360, 5.0f, 3.0f, 15,
+		TagKey.create( Registries.ITEM, MajruszsDifficulty.HELPER.getLocation( "wither_tool_materials" ) ) );
+	ToolMaterial ENDERIUM = new ToolMaterial( BlockTags.INCORRECT_FOR_NETHERITE_TOOL, 2137, 10.0f, 5.0f, 15,
+		TagKey.create( Registries.ITEM, MajruszsDifficulty.HELPER.getLocation( "enderium_tool_materials" ) ) );
 }

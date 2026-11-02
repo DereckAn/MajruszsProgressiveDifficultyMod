@@ -73,13 +73,13 @@ public class TreasureBagClient {
 		}
 
 		Item item = Registries.ITEMS.get( data.id );
-		MutableComponent message = TextHelper.translatable( "majruszsdifficulty.treasure_bag.new_items", ComponentUtils.wrapInSquareBrackets( item.getDescription() )
-			.withStyle( item.getRarity( new ItemStack( item ) ).color ) );
+		MutableComponent message = TextHelper.translatable( "majruszsdifficulty.treasure_bag.new_items", ComponentUtils.wrapInSquareBrackets( Component.translatable( item.getDescriptionId() ) )
+			.withStyle( new ItemStack( item ).getRarity().color() ) );
 		MutableComponent description = TreasureBagClient.toProgressComponent( data.bagProgress );
 		components.forEach( component->description.append( TextHelper.literal( "\n" ).append( component ) ) );
 
 		Side.getLocalPlayer()
-			.sendSystemMessage( message.withStyle( style->style.withHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, description ) ) ) );
+			.sendSystemMessage( message.withStyle( style->style.withHoverEvent( new HoverEvent.ShowText( description ) ) ) );
 	}
 
 	private static MutableComponent toProgressComponent( TreasureBagHelper.BagProgress bagProgress ) {
@@ -91,9 +91,7 @@ public class TreasureBagClient {
 
 	private static Component toComponent( TreasureBagHelper.ItemProgress itemProgress ) {
 		if( itemProgress.isUnlocked ) {
-			return Registries.ITEMS.get( itemProgress.id )
-				.getDescription()
-				.copy()
+			return Component.translatable( Registries.ITEMS.get( itemProgress.id ).getDescriptionId() )
 				.withStyle( TreasureBagClient.getUnlockedFormatting( itemProgress.quality ) );
 		} else {
 			return TextHelper.literal( "???" )

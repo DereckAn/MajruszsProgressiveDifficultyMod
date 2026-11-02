@@ -19,8 +19,8 @@ public class UndeadBattleStandard extends Item {
 			.addCondition( data->data.itemStack.getItem() instanceof UndeadBattleStandard );
 	}
 
-	public UndeadBattleStandard() {
-		super( new Properties().stacksTo( 1 ).rarity( Rarity.UNCOMMON ) );
+	public UndeadBattleStandard( Properties properties ) {
+		super( properties.stacksTo( 1 ).rarity( Rarity.UNCOMMON ) );
 	}
 
 	private static void tryToSpawn( OnPlayerInteracted data ) {

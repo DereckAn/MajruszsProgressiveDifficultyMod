@@ -1,34 +1,35 @@
 package com.majruszsdifficulty.items;
 
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.equipment.ArmorType;
 import com.majruszlibrary.events.OnEntityPowderSnowCheck;
 import com.majruszsdifficulty.MajruszsDifficulty;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Rarity;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
-public class TatteredArmor extends ArmorItem {
+public class TatteredArmor extends Item {
 	static {
 		OnEntityPowderSnowCheck.listen( OnEntityPowderSnowCheck::makeWalkable )
 			.addCondition( TatteredArmor::hasBootsEquipped );
 	}
 
-	public static Supplier< TatteredArmor > boots() {
-		return ()->new TatteredArmor( Type.BOOTS );
+	public static Function< Properties, TatteredArmor > boots() {
+		return properties->new TatteredArmor( properties, ArmorType.BOOTS );
 	}
 
-	public static Supplier< TatteredArmor > chestplate() {
-		return ()->new TatteredArmor( Type.CHESTPLATE );
+	public static Function< Properties, TatteredArmor > chestplate() {
+		return properties->new TatteredArmor( properties, ArmorType.CHESTPLATE );
 	}
 
-	public static Supplier< TatteredArmor > helmet() {
-		return ()->new TatteredArmor( Type.HELMET );
+	public static Function< Properties, TatteredArmor > helmet() {
+		return properties->new TatteredArmor( properties, ArmorType.HELMET );
 	}
 
-	public static Supplier< TatteredArmor > leggings() {
-		return ()->new TatteredArmor( Type.LEGGINGS );
+	public static Function< Properties, TatteredArmor > leggings() {
+		return properties->new TatteredArmor( properties, ArmorType.LEGGINGS );
 	}
 
 	private static boolean hasBootsEquipped( OnEntityPowderSnowCheck data ) {
@@ -36,7 +37,7 @@ public class TatteredArmor extends ArmorItem {
 			&& entity.getItemBySlot( EquipmentSlot.FEET ).is( MajruszsDifficulty.TATTERED_BOOTS_ITEM.get() );
 	}
 
-	private TatteredArmor( Type type ) {
-		super( CustomArmorMaterial.TATTERED, type, new Properties().rarity( Rarity.UNCOMMON ) );
+	private TatteredArmor( Properties properties, ArmorType type ) {
+		super( properties.humanoidArmor( CustomArmorMaterial.TATTERED, type ).rarity( Rarity.UNCOMMON ) );
 	}
 }

@@ -16,7 +16,7 @@ public class Updater {
 
 	private static void tryToChangeGameStage( OnDimensionChanged data ) {
 		for( GameStage gameStage : GameStageHelper.getGameStages() ) {
-			if( gameStage.checkDimension( data.current.dimension().location().toString() ) ) {
+			if( gameStage.checkDimension( data.current.dimension().identifier().toString() ) ) {
 				GameStageHelper.increaseGlobalGameStage( gameStage );
 				if( GameStageHelper.isPerPlayerDifficultyEnabled() ) {
 					GameStageHelper.increaseGameStage( gameStage, data.player );

@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.entity;
 
+import net.minecraft.resources.ResourceKey;
 import com.majruszlibrary.animations.Animations;
 import com.majruszlibrary.animations.AnimationsDef;
 import com.majruszlibrary.animations.IAnimableEntity;
@@ -40,10 +41,11 @@ public class Tank extends Monster implements IAnimableEntity {
 	private static final Resource< AnimationsDef > ANIMATIONS = MajruszsDifficulty.HELPER.load( "tank_animations", AnimationsDef.class );
 	private final Animations animations = Animations.create();
 
-	public static EntityType< Tank > createEntityType() {
+	public static EntityType< Tank > createEntityType( ResourceKey< EntityType< ? > > key ) {
 		return EntityType.Builder.of( Tank::new, MobCategory.MONSTER )
 			.sized( 0.99f, 2.7f )
-			.build( "tank" );
+			.eyeHeight( 2.35f )
+			.build( key );
 	}
 
 	public static AttributeSupplier createAttributes() {
@@ -62,14 +64,10 @@ public class Tank extends Monster implements IAnimableEntity {
 	}
 
 	@Override
-	public int getExperienceReward() {
+	protected int getBaseExperienceReward( ServerLevel level ) {
 		return Random.nextInt( 10, 17 );
 	}
 
-	@Override
-	public MobType getMobType() {
-		return MobType.UNDEAD;
-	}
 
 	@Override
 	public float maxUpStep() {
@@ -93,10 +91,6 @@ public class Tank extends Monster implements IAnimableEntity {
 		return SoundEvents.SKELETON_AMBIENT;
 	}
 
-	@Override
-	protected float getStandingEyeHeight( Pose pose, EntityDimensions dimensions ) {
-		return 2.35f;
-	}
 
 	@Override
 	protected SoundEvent getHurtSound( DamageSource source ) {
@@ -116,10 +110,6 @@ public class Tank extends Monster implements IAnimableEntity {
 	@Override
 	public void tick() {
 		super.tick();
-
-		if( this.isSunBurnTick() ) {
-			this.setSecondsOnFire( 8 );
-		}
 	}
 
 	@Override
@@ -160,8 +150,9 @@ public class Tank extends Monster implements IAnimableEntity {
 		}
 
 		@Override
-		protected void checkAndPerformAttack( LivingEntity target, double distanceSqr ) {
-			if( distanceSqr > this.getAttackReachSqr( target ) || !this.tank.animations.isEmpty() ) {
+		protected void checkAndPerformAttack( LivingEntity target ) {
+			double distanceSqr = this.mob.distanceToSqr( target );
+			if( !this.mob.isWithinMeleeAttackRange( target ) || !this.tank.animations.isEmpty() ) {
 				return;
 			}
 
@@ -203,14 +194,14 @@ public class Tank extends Monster implements IAnimableEntity {
 				}
 
 				if( this.tryToHitEntity( entity ) && entity instanceof ServerPlayer player && player.isBlocking() ) {
-					player.disableShield( true );
+					EntityHelper.disableCurrentItem( player, 5.0 );
 				}
 			}
 		}
 
 		private boolean tryToHitEntity( LivingEntity entity ) {
-			if( this.tank.canAttack( entity, TargetingConditions.DEFAULT ) ) {
-				return this.tank.doHurtTarget( entity );
+			if( this.tank.canAttack( entity ) ) {
+				return this.tank.doHurtTarget( ( ServerLevel )this.tank.level(), entity );
 			}
 
 			return false;

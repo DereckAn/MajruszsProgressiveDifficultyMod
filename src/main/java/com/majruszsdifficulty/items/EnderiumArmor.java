@@ -1,28 +1,29 @@
 package com.majruszsdifficulty.items;
 
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.Rarity;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
-public class EnderiumArmor extends ArmorItem {
-	public static Supplier< EnderiumArmor > boots() {
-		return ()->new EnderiumArmor( Type.BOOTS );
+public class EnderiumArmor extends Item {
+	public static Function< Properties, EnderiumArmor > boots() {
+		return properties->new EnderiumArmor( properties, ArmorType.BOOTS );
 	}
 
-	public static Supplier< EnderiumArmor > chestplate() {
-		return ()->new EnderiumArmor( Type.CHESTPLATE );
+	public static Function< Properties, EnderiumArmor > chestplate() {
+		return properties->new EnderiumArmor( properties, ArmorType.CHESTPLATE );
 	}
 
-	public static Supplier< EnderiumArmor > helmet() {
-		return ()->new EnderiumArmor( Type.HELMET );
+	public static Function< Properties, EnderiumArmor > helmet() {
+		return properties->new EnderiumArmor( properties, ArmorType.HELMET );
 	}
 
-	public static Supplier< EnderiumArmor > leggings() {
-		return ()->new EnderiumArmor( Type.LEGGINGS );
+	public static Function< Properties, EnderiumArmor > leggings() {
+		return properties->new EnderiumArmor( properties, ArmorType.LEGGINGS );
 	}
 
-	private EnderiumArmor( ArmorItem.Type type ) {
-		super( CustomArmorMaterial.ENDERIUM, type, new Properties().rarity( Rarity.UNCOMMON ).fireResistant() );
+	private EnderiumArmor( Properties properties, ArmorType type ) {
+		super( properties.humanoidArmor( CustomArmorMaterial.ENDERIUM, type ).rarity( Rarity.UNCOMMON ).fireResistant() );
 	}
 }

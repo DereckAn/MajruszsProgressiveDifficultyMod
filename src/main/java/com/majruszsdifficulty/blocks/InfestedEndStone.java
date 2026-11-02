@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.blocks;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.entity.EntityHelper;
 import com.majruszlibrary.math.AnyPos;
 import com.majruszsdifficulty.MajruszsDifficulty;
@@ -12,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -20,8 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 
 public class InfestedEndStone extends Block {
-	public InfestedEndStone() {
-		super( Properties.of().mapColor( MapColor.SAND ).strength( 0.0f, 0.75f ).sound( SoundType.STONE ) );
+	public InfestedEndStone( Properties properties ) {
+		super( properties.mapColor( MapColor.SAND ).strength( 0.0f, 0.75f ).sound( SoundType.STONE ) );
 	}
 
 	@Override
@@ -32,34 +33,34 @@ public class InfestedEndStone extends Block {
 	}
 
 	@Override
-	public void wasExploded( Level level, BlockPos blockPos, Explosion explosion ) {
+	public void wasExploded( ServerLevel level, BlockPos blockPos, Explosion explosion ) {
 		super.wasExploded( level, blockPos, explosion );
 
 		this.tryToSpawnEndermite( level, ItemStack.EMPTY, blockPos );
 	}
 
 	private void tryToSpawnEndermite( Level level, ItemStack itemStack, BlockPos blockPos ) {
-		if( !( level instanceof ServerLevel ) ) {
+		if( !( level instanceof ServerLevel serverLevel ) ) {
 			return;
 		}
 
-		if( !level.getGameRules().getBoolean( GameRules.RULE_DOBLOCKDROPS ) ) {
+		if( !serverLevel.getGameRules().get( GameRules.BLOCK_DROPS ) ) {
 			return;
 		}
 
-		if( EnchantmentHelper.getItemEnchantmentLevel( Enchantments.SILK_TOUCH, itemStack ) != 0 ) {
+		if( com.majruszlibrary.item.EnchantmentHelper.has( Enchantments.SILK_TOUCH, itemStack ) ) {
 			return;
 		}
 
-		EntityHelper.createSpawner( ()->EntityType.ENDERMITE, level )
+		EntityHelper.createSpawner( ()->EntityTypes.ENDERMITE, level )
 			.position( AnyPos.from( blockPos ).center().vec3() )
 			.beforeEvent( Mob::spawnAnim )
 			.spawn();
 	}
 
 	public static class Item extends BlockItem {
-		public Item() {
-			super( MajruszsDifficulty.INFESTED_END_STONE_BLOCK.get(), new Properties().stacksTo( 64 ) );
+		public Item( Properties properties ) {
+			super( MajruszsDifficulty.INFESTED_END_STONE_BLOCK.get(), properties.useBlockDescriptionPrefix().stacksTo( 64 ) );
 		}
 	}
 }

@@ -183,7 +183,7 @@ public class MobSpawner {
 		}
 
 		private double getDistanceToAttackPosition() {
-			return AnyPos.from( this.undead.position() ).dist2d( this.attackPosition.getCenter() ).doubleValue();
+			return AnyPos.from( this.undead.position() ).dist2d( Vec3.atCenterOf( this.attackPosition ) ).doubleValue();
 		}
 	}
 

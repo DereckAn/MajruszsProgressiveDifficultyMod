@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.effects.bleeding;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.collection.DefaultMap;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
@@ -15,8 +16,8 @@ public class BleedingConfig {
 	public static boolean CAN_BE_CURED_WITH_GOLDEN_APPLES = true;
 	public static boolean IS_APPLICABLE_TO_ANIMALS = true;
 	public static boolean IS_APPLICABLE_TO_ILLAGERS = true;
-	public static List< EntityType< ? > > OTHER_APPLICABLE_MOBS = List.of( EntityType.PLAYER, EntityType.VILLAGER );
-	public static List< EntityType< ? > > IMMUNE_MOBS = List.of( EntityType.ZOMBIE_HORSE, EntityType.SKELETON_HORSE );
+	public static List< EntityType< ? > > OTHER_APPLICABLE_MOBS = List.of( EntityTypes.PLAYER, EntityTypes.VILLAGER );
+	public static List< EntityType< ? > > IMMUNE_MOBS = List.of( EntityTypes.ZOMBIE_HORSE, EntityTypes.SKELETON_HORSE );
 	public static GameStageValue< EffectDef > EFFECTS = GameStageValue.of(
 		DefaultMap.defaultEntry( new EffectDef( ()->null, 0, 24.0f ) ),
 		DefaultMap.entry( GameStage.EXPERT_ID, new EffectDef( ()->null, 1, 24.0f ) ),

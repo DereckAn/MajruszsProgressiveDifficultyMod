@@ -6,7 +6,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.alchemy.PotionContents;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -51,7 +52,7 @@ public class CreativeModeTabs {
 				MajruszsDifficulty.WITHER_POTION,
 				MajruszsDifficulty.WITHER_LONG_POTION,
 				MajruszsDifficulty.WITHER_STRONG_POTION
-			).forEach( potion->output.accept( PotionUtils.setPotion( new ItemStack( item ), potion.get() ) ) )
+			).forEach( potion->output.accept( PotionContents.createItemStack( item, BuiltInRegistries.POTION.wrapAsHolder( potion.get() ) ) ) )
 		);
 
 		Stream.of(

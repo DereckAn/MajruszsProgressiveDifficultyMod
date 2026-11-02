@@ -14,8 +14,8 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 
 public class EnderiumShardOre extends Block {
-	public EnderiumShardOre() {
-		super( Properties.of()
+	public EnderiumShardOre( Properties properties ) {
+		super( properties
 			.mapColor( MapColor.SAND )
 			.requiresCorrectToolForDrops()
 			.strength( 10.0f, 1200.0f )
@@ -24,14 +24,14 @@ public class EnderiumShardOre extends Block {
 
 	@Override
 	protected void tryDropExperience( ServerLevel level, BlockPos position, ItemStack itemStack, IntProvider intProvider ) {
-		if( !EnchantmentHelper.has( ()->Enchantments.SILK_TOUCH, itemStack ) ) {
+		if( !EnchantmentHelper.has( Enchantments.SILK_TOUCH, itemStack ) ) {
 			this.popExperience( level, position, Random.nextInt( 6, 11 ) );
 		}
 	}
 
 	public static class Item extends BlockItem {
-		public Item() {
-			super( MajruszsDifficulty.ENDERIUM_SHARD_ORE_BLOCK.get(), new Properties().stacksTo( 64 ) );
+		public Item( Properties properties ) {
+			super( MajruszsDifficulty.ENDERIUM_SHARD_ORE_BLOCK.get(), properties.useBlockDescriptionPrefix().stacksTo( 64 ) );
 		}
 	}
 }

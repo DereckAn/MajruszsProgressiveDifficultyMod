@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EvokerFangScroll extends ScrollItem {
+	public EvokerFangScroll( Properties properties ) {
+		super( properties );
+	}
+
 	private static int ATTACK_DAMAGE = 12;
 	private static Range< Integer > ATTACK_RANGE = Range.of( 8, 20 );
 

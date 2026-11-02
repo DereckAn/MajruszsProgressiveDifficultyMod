@@ -18,8 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 
 public class FragileEndStone extends Block {
-	public FragileEndStone() {
-		super( Properties.of().mapColor( MapColor.SAND ).strength( 0.0f, 0.75f ).sound( SoundType.STONE ) );
+	public FragileEndStone( Properties properties ) {
+		super( properties.mapColor( MapColor.SAND ).strength( 0.0f, 0.75f ).sound( SoundType.STONE ) );
 	}
 
 	@Override
@@ -32,18 +32,17 @@ public class FragileEndStone extends Block {
 	}
 
 	@Override
-	public void fallOn( Level level, BlockState blockState, BlockPos blockPos, Entity entity, float distance ) {
+	public void fallOn( Level level, BlockState blockState, BlockPos blockPos, Entity entity, double distance ) {
 		if( distance > 0.7f && entity instanceof Player player ) {
 			FragileEndStone.destroy( level, blockState, blockPos, player );
 		}
 	}
 
-	@Override
-	public void updateEntityAfterFallOn( BlockGetter block, Entity entity ) {}
+	// ponytail: the no-op updateEntityAfterFallOn override was dropped (the hook no longer exists in 26.x)
 
 	@Override
-	public void playerWillDestroy( Level level, BlockPos blockPos, BlockState blockState, Player player ) {
-		super.playerWillDestroy( level, blockPos, blockState, player );
+	public BlockState playerWillDestroy( Level level, BlockPos blockPos, BlockState blockState, Player player ) {
+		BlockState result = super.playerWillDestroy( level, blockPos, blockState, player );
 
 		Block block = blockState.getBlock();
 		TimeHelper.nextTick( delay->{
@@ -55,6 +54,8 @@ public class FragileEndStone extends Block {
 				}
 			}
 		} );
+
+		return result;
 	}
 
 	private static void destroy( Level level, BlockState blockState, BlockPos blockPos, Player player ) {
@@ -63,8 +64,8 @@ public class FragileEndStone extends Block {
 	}
 
 	public static class Item extends BlockItem {
-		public Item() {
-			super( MajruszsDifficulty.FRAGILE_END_STONE_BLOCK.get(), new Properties().stacksTo( 64 ) );
+		public Item( Properties properties ) {
+			super( MajruszsDifficulty.FRAGILE_END_STONE_BLOCK.get(), properties.useBlockDescriptionPrefix().stacksTo( 64 ) );
 		}
 	}
 }

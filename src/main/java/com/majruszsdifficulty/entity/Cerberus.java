@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.entity;
 
+import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
+import net.minecraft.resources.ResourceKey;
 import com.majruszlibrary.animations.Animations;
 import com.majruszlibrary.animations.AnimationsDef;
 import com.majruszlibrary.animations.IAnimableEntity;
@@ -36,7 +38,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -60,10 +62,11 @@ public class Cerberus extends Monster implements IAnimableEntity {
 			.addCondition( data->data.entity instanceof Cerberus );
 	}
 
-	public static EntityType< Cerberus > createEntityType() {
+	public static EntityType< Cerberus > createEntityType( ResourceKey< EntityType< ? > > key ) {
 		return EntityType.Builder.of( Cerberus::new, MobCategory.MONSTER )
 			.sized( 1.2f, 1.75f )
-			.build( "cerberus" );
+			.eyeHeight( 1.6f )
+			.build( key );
 	}
 
 	public static AttributeSupplier createAttributes() {
@@ -81,14 +84,10 @@ public class Cerberus extends Monster implements IAnimableEntity {
 	}
 
 	@Override
-	public int getExperienceReward() {
+	protected int getBaseExperienceReward( ServerLevel level ) {
 		return Random.nextInt( 26, 46 );
 	}
 
-	@Override
-	public MobType getMobType() {
-		return MobType.UNDEAD;
-	}
 
 	@Override
 	public float maxUpStep() {
@@ -110,10 +109,6 @@ public class Cerberus extends Monster implements IAnimableEntity {
 	@Override
 	public void tick() {
 		super.tick();
-
-		if( this.isSunBurnTick() ) {
-			this.setSecondsOnFire( 8 );
-		}
 	}
 
 	@Override
@@ -128,13 +123,9 @@ public class Cerberus extends Monster implements IAnimableEntity {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.WOLF_GROWL;
+		return SoundEvents.WOLF_SOUNDS.get( WolfSoundVariants.SoundSet.CLASSIC ).adultSounds().growlSound().value();
 	}
 
-	@Override
-	protected float getStandingEyeHeight( Pose pose, EntityDimensions dimensions ) {
-		return 1.6f;
-	}
 
 	@Override
 	protected SoundEvent getHurtSound( DamageSource source ) {
@@ -195,7 +186,8 @@ public class Cerberus extends Monster implements IAnimableEntity {
 		}
 
 		@Override
-		protected void checkAndPerformAttack( LivingEntity target, double distanceSqr ) {
+		protected void checkAndPerformAttack( LivingEntity target ) {
+			double distanceSqr = this.mob.distanceToSqr( target );
 			if( !this.cerberus.animations.isEmpty() || !( target.level() instanceof ServerLevel ) ) {
 				return;
 			}
@@ -204,7 +196,7 @@ public class Cerberus extends Monster implements IAnimableEntity {
 				this.fireballCooldownLeft = TimeHelper.toTicks( 10.0 );
 				this.resetAttackCooldown();
 				this.useFireBreath( target );
-			} else if( distanceSqr < this.getAttackReachSqr( target ) ) {
+			} else if( this.mob.isWithinMeleeAttackRange( target ) ) {
 				this.resetAttackCooldown();
 				this.bite( target );
 			}
@@ -219,9 +211,9 @@ public class Cerberus extends Monster implements IAnimableEntity {
 
 		private void bite( LivingEntity target ) {
 			this.cerberus.playAnimation( "bite" )
-				.addCallback( 2, ()->this.cerberus.playSound( SoundEvents.WOLF_AMBIENT, 0.5f, 0.8f ) )
-				.addCallback( 3, ()->this.cerberus.playSound( SoundEvents.WOLF_AMBIENT, 0.5f, 0.7f ) )
-				.addCallback( 4, ()->this.cerberus.playSound( SoundEvents.WOLF_AMBIENT, 0.5f, 0.9f ) )
+				.addCallback( 2, ()->this.cerberus.playSound( SoundEvents.WOLF_SOUNDS.get( WolfSoundVariants.SoundSet.CLASSIC ).adultSounds().ambientSound().value(), 0.5f, 0.8f ) )
+				.addCallback( 3, ()->this.cerberus.playSound( SoundEvents.WOLF_SOUNDS.get( WolfSoundVariants.SoundSet.CLASSIC ).adultSounds().ambientSound().value(), 0.5f, 0.7f ) )
+				.addCallback( 4, ()->this.cerberus.playSound( SoundEvents.WOLF_SOUNDS.get( WolfSoundVariants.SoundSet.CLASSIC ).adultSounds().ambientSound().value(), 0.5f, 0.9f ) )
 				.addCallback( 7, ()->this.hitAllNearbyEntities( ( ServerLevel )target.level() ) );
 		}
 
@@ -232,10 +224,10 @@ public class Cerberus extends Monster implements IAnimableEntity {
 					continue;
 				}
 
-				if( this.cerberus.canAttack( entity, TargetingConditions.DEFAULT ) ) {
-					this.cerberus.doHurtTarget( entity );
+				if( this.cerberus.canAttack( entity ) ) {
+					this.cerberus.doHurtTarget( ( ServerLevel )this.cerberus.level(), entity );
 					if( entity instanceof ServerPlayer player && player.isBlocking() ) {
-						player.disableShield( true );
+						EntityHelper.disableCurrentItem( player, 5.0 );
 					}
 				}
 			}
@@ -249,7 +241,7 @@ public class Cerberus extends Monster implements IAnimableEntity {
 				Vec3 normalized = AnyPos.from( offset ).norm().vec3();
 				normalized = new Vec3( cos * normalized.x - sin * normalized.z, normalized.y, sin * normalized.x + cos * normalized.z );
 				Vec3 spawnPosition = AnyPos.from( this.mob.position() ).add( normalized ).add( 0.0, Random.nextDouble( 1.2, 1.5 ), 0.0 ).vec3();
-				SmallFireball fireball = new SmallFireball( this.mob.level(), this.mob, power.x, power.y, power.z );
+				SmallFireball fireball = new SmallFireball( this.mob.level(), this.mob, power );
 				fireball.setPos( spawnPosition.x, spawnPosition.y, spawnPosition.z );
 				fireball.setDeltaMovement( AnyPos.from( power ).norm().mul( 0.25 ).vec3() );
 

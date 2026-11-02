@@ -11,7 +11,12 @@ import com.majruszsdifficulty.MajruszsDifficulty;
 import com.majruszsdifficulty.events.OnBleedingTooltip;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.equipment.Equippable;
 
 public class BleedingArmorProtection {
 	private static float BASE_BONUS = 0.09f;
@@ -25,7 +30,7 @@ public class BleedingArmorProtection {
 			.addCondition( data->Random.check( BleedingArmorProtection.calculateCancelChance( data ) ) );
 
 		OnBleedingTooltip.listen( BleedingArmorProtection::addTooltip )
-			.addCondition( data->data.itemStack.getItem() instanceof ArmorItem );
+			.addCondition( data->BleedingArmorProtection.isArmor( data.itemStack ) );
 
 		Serializables.getStatic( BleedingConfig.class )
 			.define( "chance_multiplier_base", Reader.number(), ()->BASE_BONUS, v->BASE_BONUS = Range.of( 0.0f, 1.0f ).clamp( v ) )
@@ -36,8 +41,9 @@ public class BleedingArmorProtection {
 	private static float calculateCancelChance( OnEntityEffectCheck data ) {
 		float chance = 1.0f;
 		for( EquipmentSlot slot : EquipmentSlots.ARMOR ) {
-			if( data.entity.getItemBySlot( slot ).getItem() instanceof ArmorItem armorItem ) {
-				chance *= 1.0f - BleedingArmorProtection.getArmorMultiplier( armorItem );
+			ItemStack itemStack = data.entity.getItemBySlot( slot );
+			if( BleedingArmorProtection.isArmor( itemStack ) ) {
+				chance *= 1.0f - BleedingArmorProtection.getArmorMultiplier( itemStack );
 			}
 		}
 
@@ -45,10 +51,29 @@ public class BleedingArmorProtection {
 	}
 
 	private static void addTooltip( OnBleedingTooltip data ) {
-		data.addArmor( LivingEntity.getEquipmentSlotForItem( data.itemStack ), BleedingArmorProtection.getArmorMultiplier( ( ArmorItem )data.itemStack.getItem() ) );
+		data.addArmor( data.itemStack.get( DataComponents.EQUIPPABLE ).slot(), BleedingArmorProtection.getArmorMultiplier( data.itemStack ) );
 	}
 
-	private static float getArmorMultiplier( ArmorItem item ) {
-		return 1.0f - Range.of( 0.0f, 0.9f ).clamp( BASE_BONUS + ARMOR_BONUS * item.getDefense() + TOUGHNESS_BONUS * item.getToughness() );
+	// 26.x: ArmorItem is gone; armor pieces are items with an armor-slot Equippable, defense/toughness are attribute modifiers
+	private static boolean isArmor( ItemStack itemStack ) {
+		Equippable equippable = itemStack.get( DataComponents.EQUIPPABLE );
+
+		return equippable != null && equippable.slot().isArmor();
+	}
+
+	private static float getArmorMultiplier( ItemStack itemStack ) {
+		double defense = 0.0, toughness = 0.0;
+		for( ItemAttributeModifiers.Entry entry : itemStack.getOrDefault( DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY ).modifiers() ) {
+			if( entry.modifier().operation() != AttributeModifier.Operation.ADD_VALUE ) {
+				continue;
+			}
+			if( entry.attribute().is( Attributes.ARMOR ) ) {
+				defense += entry.modifier().amount();
+			} else if( entry.attribute().is( Attributes.ARMOR_TOUGHNESS ) ) {
+				toughness += entry.modifier().amount();
+			}
+		}
+
+		return 1.0f - Range.of( 0.0f, 0.9f ).clamp( ( float )( BASE_BONUS + ARMOR_BONUS * defense + TOUGHNESS_BONUS * toughness ) );
 	}
 }

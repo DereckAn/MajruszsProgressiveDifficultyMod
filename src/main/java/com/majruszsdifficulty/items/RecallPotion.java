@@ -1,15 +1,16 @@
 package com.majruszsdifficulty.items;
 
+import net.minecraft.world.item.ItemUseAnimation;
 import com.majruszlibrary.events.OnItemTooltip;
 import com.majruszlibrary.item.ItemHelper;
 import com.majruszlibrary.level.LevelHelper;
 import com.majruszlibrary.text.TextHelper;
 import com.majruszlibrary.time.TimeHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,12 +24,12 @@ public class RecallPotion extends Item {
 			.addCondition( data->data.itemStack.getItem() instanceof RecallPotion );
 	}
 
-	public RecallPotion() {
-		super( new Properties().rarity( Rarity.UNCOMMON ).stacksTo( 16 ) );
+	public RecallPotion( Properties properties ) {
+		super( properties.rarity( Rarity.UNCOMMON ).stacksTo( 16 ) );
 	}
 
 	@Override
-	public InteractionResultHolder< ItemStack > use( Level world, Player player, InteractionHand hand ) {
+	public InteractionResult use( Level world, Player player, InteractionHand hand ) {
 		return ItemUtils.startUsingInstantly( world, player, hand );
 	}
 
@@ -41,19 +42,19 @@ public class RecallPotion extends Item {
 		if( livingEntity instanceof ServerPlayer player ) {
 			CriteriaTriggers.CONSUME_ITEM.trigger( player, itemStack );
 			LevelHelper.getSpawnPoint( player ).ifPresent( spawnPoint->spawnPoint.teleport( player ) );
-			player.addEffect( new MobEffectInstance( MobEffects.CONFUSION, TimeHelper.toTicks( 7.0 ), 1 ) );
+			player.addEffect( new MobEffectInstance( MobEffects.NAUSEA, TimeHelper.toTicks( 7.0 ), 1 ) );
 		}
 
 		return itemStack;
 	}
 
 	@Override
-	public UseAnim getUseAnimation( ItemStack itemStack ) {
-		return UseAnim.DRINK;
+	public ItemUseAnimation getUseAnimation( ItemStack itemStack ) {
+		return ItemUseAnimation.DRINK;
 	}
 
 	@Override
-	public int getUseDuration( ItemStack itemStack ) {
+	public int getUseDuration( ItemStack itemStack, LivingEntity user ) {
 		return 32;
 	}
 

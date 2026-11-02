@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.features;
 
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.command.Command;
 import com.majruszlibrary.command.CommandData;
 import com.majruszlibrary.command.IParameter;
@@ -23,7 +25,7 @@ import com.majruszsdifficulty.undeadarmy.UndeadArmyHelper;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
@@ -42,11 +44,11 @@ public class MobGroups {
 			0.1f,
 			true,
 			List.of(
-				new LeaderDef( EntityType.SKELETON, MajruszsDifficulty.HELPER.getLocation( "mob_groups/skeleton_leader" ) )
+				new LeaderDef( EntityTypes.SKELETON, MajruszsDifficulty.HELPER.getLocation( "mob_groups/skeleton_leader" ) )
 			),
 			Range.of( 1, 3 ),
 			List.of(
-				new SidekickDef( EntityType.SKELETON, MajruszsDifficulty.HELPER.getLocation( "mob_groups/skeleton_sidekick" ) )
+				new SidekickDef( EntityTypes.SKELETON, MajruszsDifficulty.HELPER.getLocation( "mob_groups/skeleton_sidekick" ) )
 			)
 		),
 		"undead", new GroupDef(
@@ -54,17 +56,17 @@ public class MobGroups {
 			0.1f,
 			true,
 			List.of(
-				new LeaderDef( EntityType.SKELETON, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_3_skeleton" ) ),
-				new LeaderDef( EntityType.STRAY, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_3_skeleton" ) ),
-				new LeaderDef( EntityType.ZOMBIE, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_3_mob" ) ),
-				new LeaderDef( EntityType.HUSK, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_3_mob" ) )
+				new LeaderDef( EntityTypes.SKELETON, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_3_skeleton" ) ),
+				new LeaderDef( EntityTypes.STRAY, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_3_skeleton" ) ),
+				new LeaderDef( EntityTypes.ZOMBIE, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_3_mob" ) ),
+				new LeaderDef( EntityTypes.HUSK, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_3_mob" ) )
 			),
 			Range.of( 2, 4 ),
 			List.of(
-				new SidekickDef( EntityType.SKELETON, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_2_mob" ) ),
-				new SidekickDef( EntityType.STRAY, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_2_mob" ) ),
-				new SidekickDef( EntityType.ZOMBIE, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_2_mob" ) ),
-				new SidekickDef( EntityType.HUSK, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_2_mob" ) )
+				new SidekickDef( EntityTypes.SKELETON, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_2_mob" ) ),
+				new SidekickDef( EntityTypes.STRAY, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_2_mob" ) ),
+				new SidekickDef( EntityTypes.ZOMBIE, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_2_mob" ) ),
+				new SidekickDef( EntityTypes.HUSK, MajruszsDifficulty.HELPER.getLocation( "undead_army/wave_2_mob" ) )
 			)
 		),
 		"zombie_miners", new GroupDef(
@@ -72,11 +74,11 @@ public class MobGroups {
 			0.25f,
 			true,
 			List.of(
-				new LeaderDef( EntityType.ZOMBIE, MajruszsDifficulty.HELPER.getLocation( "mob_groups/zombie_leader" ) )
+				new LeaderDef( EntityTypes.ZOMBIE, MajruszsDifficulty.HELPER.getLocation( "mob_groups/zombie_leader" ) )
 			),
 			Range.of( 1, 3 ),
 			List.of(
-				new SidekickDef( EntityType.ZOMBIE, MajruszsDifficulty.HELPER.getLocation( "mob_groups/zombie_sidekick" ) )
+				new SidekickDef( EntityTypes.ZOMBIE, MajruszsDifficulty.HELPER.getLocation( "mob_groups/zombie_sidekick" ) )
 			)
 		),
 		"piglins", new GroupDef(
@@ -84,11 +86,11 @@ public class MobGroups {
 			0.25f,
 			true,
 			List.of(
-				new LeaderDef( EntityType.PIGLIN, MajruszsDifficulty.HELPER.getLocation( "mob_groups/piglin_leader" ) )
+				new LeaderDef( EntityTypes.PIGLIN, MajruszsDifficulty.HELPER.getLocation( "mob_groups/piglin_leader" ) )
 			),
 			Range.of( 1, 3 ),
 			List.of(
-				new SidekickDef( EntityType.PIGLIN, MajruszsDifficulty.HELPER.getLocation( "mob_groups/piglin_sidekick" ) )
+				new SidekickDef( EntityTypes.PIGLIN, MajruszsDifficulty.HELPER.getLocation( "mob_groups/piglin_sidekick" ) )
 			)
 		)
 	);
@@ -168,7 +170,7 @@ public class MobGroups {
 			SidekickDef sidekickDef = Random.next( groupDef.sidekicks );
 			Entity entity = EntityHelper.createSpawner( ()->sidekickDef.type, level )
 				.position( MobGroups.getRandomizedPosition( level, leader.position() ) )
-				.mobSpawnType( MobSpawnType.EVENT )
+				.mobSpawnType( EntitySpawnReason.EVENT )
 				.beforeEvent( MobGroups::markAsGroupPart )
 				.spawn();
 			if( !( entity instanceof PathfinderMob sidekick ) ) {
@@ -180,7 +182,7 @@ public class MobGroups {
 		}
 	}
 
-	private static void giveItems( PathfinderMob mob, ResourceLocation id ) {
+	private static void giveItems( PathfinderMob mob, Identifier id ) {
 		LootHelper.getLootTable( id )
 			.getRandomItems( LootHelper.toGiftParams( mob ) )
 			.forEach( itemStack->ItemHelper.equip( mob, itemStack ) );
@@ -230,7 +232,7 @@ public class MobGroups {
 		LeaderDef leaderDef = Random.next( groupDef.leaders );
 		Entity entity = EntityHelper.createSpawner( ()->leaderDef.type, player.level() )
 			.position( player.position() )
-			.mobSpawnType( MobSpawnType.COMMAND )
+			.mobSpawnType( EntitySpawnReason.COMMAND )
 			.spawn();
 		if( !( entity instanceof PathfinderMob leader ) ) {
 			return -1;
@@ -348,9 +350,9 @@ public class MobGroups {
 
 	public static class LeaderDef {
 		public EntityType< ? > type;
-		public ResourceLocation equipment;
+		public Identifier equipment;
 
-		public LeaderDef( EntityType< ? > type, ResourceLocation equipment ) {
+		public LeaderDef( EntityType< ? > type, Identifier equipment ) {
 			this.type = type;
 			this.equipment = equipment;
 		}
@@ -360,9 +362,9 @@ public class MobGroups {
 
 	public static class SidekickDef {
 		public EntityType< ? > type;
-		public ResourceLocation equipment;
+		public Identifier equipment;
 
-		public SidekickDef( EntityType< ? > type, ResourceLocation equipment ) {
+		public SidekickDef( EntityType< ? > type, Identifier equipment ) {
 			this.type = type;
 			this.equipment = equipment;
 		}

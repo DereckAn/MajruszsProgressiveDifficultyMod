@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.blocks;
 
+import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.redstone.Orientation;
 import com.majruszlibrary.events.OnBlockPlaced;
 import com.majruszlibrary.events.base.Condition;
 import com.majruszsdifficulty.MajruszsDifficulty;
@@ -22,15 +24,15 @@ public class InfernalSponge extends Block {
 			.addCondition( data->data.blockState.is( MajruszsDifficulty.INFERNAL_SPONGE_BLOCK.get() ) );
 	}
 
-	public InfernalSponge() {
-		super( Properties.of().mapColor( MapColor.NETHER ).strength( 0.6f ).sound( SoundType.GRASS ) );
+	public InfernalSponge( Properties properties ) {
+		super( properties.mapColor( MapColor.NETHER ).strength( 0.6f ).sound( SoundType.GRASS ) );
 	}
 
 	@Override
-	public void neighborChanged( BlockState blockState, Level level, BlockPos blockPos, Block neighbor, BlockPos neighborPos, boolean p_56806_ ) {
+	protected void neighborChanged( BlockState blockState, Level level, BlockPos blockPos, Block neighbor, @Nullable Orientation orientation, boolean p_56806_ ) {
 		InfernalSponge.absorb( level, blockPos );
 
-		super.neighborChanged( blockState, level, blockPos, neighbor, neighborPos, p_56806_ );
+		super.neighborChanged( blockState, level, blockPos, neighbor, orientation, p_56806_ );
 	}
 
 	private static void absorb( OnBlockPlaced data ) {
@@ -44,16 +46,16 @@ public class InfernalSponge extends Block {
 			}
 		}, blockPos->{
 			if( blockPos.equals( spongePos ) ) {
-				return true;
+				return BlockPos.TraversalNodeStatus.ACCEPT;
 			}
 
 			BlockState blockState = level.getBlockState( blockPos );
 			FluidState fluidState = level.getFluidState( blockPos );
 			if( !fluidState.is( Fluids.LAVA ) && !fluidState.is( Fluids.FLOWING_LAVA ) ) {
-				return false;
+				return BlockPos.TraversalNodeStatus.SKIP;
 			}
-			if( blockState.getBlock() instanceof BucketPickup bucketPickup && !bucketPickup.pickupBlock( level, blockPos, blockState ).isEmpty() ) {
-				return true;
+			if( blockState.getBlock() instanceof BucketPickup bucketPickup && !bucketPickup.pickupBlock( null, level, blockPos, blockState ).isEmpty() ) {
+				return BlockPos.TraversalNodeStatus.ACCEPT;
 			}
 
 			if( blockState.getBlock() instanceof LiquidBlock ) {
@@ -64,7 +66,7 @@ public class InfernalSponge extends Block {
 				level.setBlock( blockPos, Blocks.AIR.defaultBlockState(), 3 );
 			}
 
-			return true;
+			return BlockPos.TraversalNodeStatus.ACCEPT;
 		} ) - 1;
 
 		if( absorbedBlocks > 0 ) {
@@ -73,8 +75,8 @@ public class InfernalSponge extends Block {
 	}
 
 	public static class Item extends BlockItem {
-		public Item() {
-			super( MajruszsDifficulty.INFERNAL_SPONGE_BLOCK.get(), new Properties().rarity( Rarity.UNCOMMON ).fireResistant() );
+		public Item( Properties properties ) {
+			super( MajruszsDifficulty.INFERNAL_SPONGE_BLOCK.get(), properties.useBlockDescriptionPrefix().rarity( Rarity.UNCOMMON ).fireResistant() );
 		}
 	}
 }

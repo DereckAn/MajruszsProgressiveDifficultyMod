@@ -19,7 +19,7 @@ public class BloodParticle extends CustomParticle {
 	private float color;
 
 	public BloodParticle( ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, SpriteSet spriteSet ) {
-		super( level, x, y, z, xSpeed, ySpeed, zSpeed );
+		super( level, x, y, z, xSpeed, ySpeed, zSpeed, spriteSet.first() );
 
 		float randomRatio = Random.nextFloat();
 

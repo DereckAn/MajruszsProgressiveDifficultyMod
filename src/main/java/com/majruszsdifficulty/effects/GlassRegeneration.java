@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.effects;
 
+import net.minecraft.server.level.ServerLevel;
 import com.majruszlibrary.emitter.SoundEmitter;
 import com.majruszlibrary.entity.EffectHelper;
 import com.majruszlibrary.events.OnEntityDamaged;
@@ -30,26 +31,28 @@ public class GlassRegeneration extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick( LivingEntity entity, int amplifier ) {
+	public boolean applyEffectTick( ServerLevel level, LivingEntity entity, int amplifier ) {
 		if( entity.getHealth() < entity.getMaxHealth() ) {
 			entity.heal( 1.0f );
 		}
+
+		return true;
 	}
 
 	@Override
-	public void applyInstantenousEffect( @Nullable Entity source, @Nullable Entity indirectSource, LivingEntity entity, int amplifier, double health ) {
-		this.applyEffectTick( entity, amplifier );
+	public void applyInstantaneousEffect( ServerLevel level, @Nullable Entity source, @Nullable Entity indirectSource, LivingEntity entity, int amplifier, double health ) {
+		this.applyEffectTick( level, entity, amplifier );
 	}
 
 	@Override
-	public boolean isDurationEffectTick( int duration, int amplifier ) {
+	public boolean shouldApplyEffectTickThisTick( int duration, int amplifier ) {
 		int cooldown = TimeHelper.toTicks( 8.0 ) >> amplifier;
 
 		return cooldown <= 0 || duration % cooldown == 0;
 	}
 
 	private static void removeOnHit( OnEntityDamaged data ) {
-		data.target.removeEffect( MajruszsDifficulty.GLASS_REGENERATION_EFFECT.get() );
+		data.target.removeEffect( EffectHelper.toHolder( MajruszsDifficulty.GLASS_REGENERATION_EFFECT.get() ) );
 		GLASS_BREAK.position( data.target.position() ).emit( data.getServerLevel() );
 	}
 }

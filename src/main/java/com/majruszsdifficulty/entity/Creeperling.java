@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.entity;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.resources.ResourceKey;
 import com.majruszlibrary.events.OnExploded;
 import com.majruszsdifficulty.mixin.IMixinCreeper;
 import net.minecraft.world.entity.*;
@@ -14,10 +16,11 @@ public class Creeperling extends Creeper {
 			.addCondition( data->data.entity instanceof Creeperling );
 	}
 
-	public static EntityType< Creeperling > createEntityType() {
+	public static EntityType< Creeperling > createEntityType( ResourceKey< EntityType< ? > > key ) {
 		return EntityType.Builder.of( Creeperling::new, MobCategory.MONSTER )
 			.sized( 0.6f, 0.9f )
-			.build( "creeperling" );
+			.eyeHeight( 0.75f )
+			.build( key );
 	}
 
 	public static AttributeSupplier createChildAttributes() {
@@ -39,13 +42,8 @@ public class Creeperling extends Creeper {
 	}
 
 	@Override
-	public int getExperienceReward() {
+	protected int getBaseExperienceReward( ServerLevel level ) {
 		return 3;
-	}
-
-	@Override
-	protected float getStandingEyeHeight( Pose pose, EntityDimensions size ) {
-		return 0.75f;
 	}
 
 	private static void weakenExplosion( OnExploded data ) {

@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.itemsets;
 
+import net.minecraft.network.chat.Component;
 import com.majruszlibrary.entity.EffectHelper;
 import com.majruszlibrary.entity.EntityHelper;
 import com.majruszlibrary.events.OnChorusFruitEaten;
@@ -21,6 +22,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
@@ -28,13 +30,13 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class EnderiumSet {
-	static final MobEffect[] EFFECTS = new MobEffect[]{
+	static final Holder< MobEffect >[] EFFECTS = new Holder[]{
 		MobEffects.ABSORPTION,
-		MobEffects.DAMAGE_BOOST,
-		MobEffects.DAMAGE_RESISTANCE,
+		MobEffects.STRENGTH,
+		MobEffects.RESISTANCE,
 		MobEffects.FIRE_RESISTANCE,
-		MobEffects.JUMP,
-		MobEffects.MOVEMENT_SPEED,
+		MobEffects.JUMP_BOOST,
+		MobEffects.SPEED,
 		MobEffects.SATURATION
 	};
 	static final ItemSetRequirement HELMET = ItemSetRequirement.of( MajruszsDifficulty.ENDERIUM_HELMET_ITEM, EquipmentSlot.HEAD );
@@ -46,7 +48,7 @@ public class EnderiumSet {
 	static final ItemSetBonus END_LOOTING = ItemSetBonus.any( 2 )
 		.component( "majruszsdifficulty.sets.enderium.bonus_2" );
 	static final ItemSetBonus CHORUS_FRUIT = ItemSetBonus.any( 3 )
-		.component( "majruszsdifficulty.sets.enderium.bonus_3", Items.CHORUS_FRUIT.getDescription() );
+		.component( "majruszsdifficulty.sets.enderium.bonus_3", Component.translatable( Items.CHORUS_FRUIT.getDescriptionId() ) );
 	static final ItemSetBonus VOID_PROTECTION = ItemSetBonus.any( 4 )
 		.component( "majruszsdifficulty.sets.enderium.bonus_4" );
 	static final ItemSet ITEM_SET = ItemSet.create()
@@ -70,7 +72,7 @@ public class EnderiumSet {
 
 		OnEntityDied.listen( EnderiumSet::cancelDeath )
 			.addCondition( data->ITEM_SET.canTrigger( VOID_PROTECTION, data.target ) )
-			.addCondition( data->data.target.getY() < data.target.level().getMinBuildHeight() - 64 )
+			.addCondition( data->data.target.getY() < data.target.level().getMinY() - 64 )
 			.addCondition( data->data.source.is( DamageTypes.FELL_OUT_OF_WORLD ) );
 	}
 
@@ -79,8 +81,8 @@ public class EnderiumSet {
 	}
 
 	private static void giveRandomEffect( OnChorusFruitEaten data ) {
-		List< MobEffect > notAppliedEffects = Stream.of( EFFECTS )
-			.filter( effect->EffectHelper.getAmplifier( ()->effect, data.entity ).isEmpty() )
+		List< Holder< MobEffect > > notAppliedEffects = Stream.of( EFFECTS )
+			.filter( effect->!data.entity.hasEffect( effect ) )
 			.toList();
 		if( notAppliedEffects.isEmpty() ) {
 			notAppliedEffects = List.of( EFFECTS );

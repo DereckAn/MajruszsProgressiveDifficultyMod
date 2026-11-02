@@ -11,14 +11,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Item;
 
-public class WitherSword extends SwordItem {
-	private static EffectDef EFFECT = new EffectDef( ()->MobEffects.WITHER, 1, 6.0f );
+public class WitherSword extends Item {
+	private static EffectDef EFFECT = new EffectDef( ()->MobEffects.WITHER.value(), 1, 6.0f );
 
 	static {
 		OnEntityDamaged.listen( WitherSword::apply )
-			.addCondition( data->!data.source.isIndirect() )
+			.addCondition( data->data.source.isDirect() )
 			.addCondition( data->data.attacker != null )
 			.addCondition( data->data.attacker.getMainHandItem().getItem() instanceof WitherSword );
 
@@ -32,8 +32,8 @@ public class WitherSword extends SwordItem {
 			.define( "effect", Reader.custom( EffectDef::new ), ()->EFFECT, v->EFFECT = v );
 	}
 
-	public WitherSword() {
-		super( CustomItemTier.WITHER, 3, -2.4f, new Properties().rarity( Rarity.UNCOMMON ) );
+	public WitherSword( Properties properties ) {
+		super( properties.sword( CustomItemTier.WITHER, 3.0f, -2.4f ).rarity( Rarity.UNCOMMON ) );
 	}
 
 	private static void apply( OnEntityDamaged data ) {

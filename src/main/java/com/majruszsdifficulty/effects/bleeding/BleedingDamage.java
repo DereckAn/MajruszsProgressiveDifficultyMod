@@ -59,10 +59,10 @@ public class BleedingDamage {
 	private static void dealDamage( LivingEntity entity ) {
 		Holder< DamageType > damageType = entity.level()
 			.registryAccess()
-			.registryOrThrow( net.minecraft.core.registries.Registries.DAMAGE_TYPE )
-			.getHolderOrThrow( MajruszsDifficulty.BLEEDING_DAMAGE_SOURCE );
+			.lookupOrThrow( net.minecraft.core.registries.Registries.DAMAGE_TYPE )
+			.getOrThrow( MajruszsDifficulty.BLEEDING_DAMAGE_SOURCE );
 
-		if( entity.getEffect( MajruszsDifficulty.BLEEDING_EFFECT.get() ) instanceof Bleeding.MobEffectInstance effectInstance ) {
+		if( entity.getEffect( EffectHelper.toHolder( MajruszsDifficulty.BLEEDING_EFFECT.get() ) ) instanceof Bleeding.MobEffectInstance effectInstance ) {
 			Vec3 motion = entity.getDeltaMovement();
 			entity.hurt( new DamageSource( damageType, null, effectInstance.damageSourceEntity ), 1.0f );
 			entity.setDeltaMovement( motion ); // sets previous motion to avoid any knockback from bleeding

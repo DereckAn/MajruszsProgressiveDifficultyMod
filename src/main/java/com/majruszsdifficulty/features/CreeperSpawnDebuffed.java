@@ -22,10 +22,10 @@ public class CreeperSpawnDebuffed {
 	private static float CHANCE = 0.375f;
 	private static boolean IS_SCALED_BY_CRD = true;
 	private static List< EffectDef > EFFECTS = List.of(
-		new EffectDef( ()->MobEffects.WEAKNESS, 0, 60.0f ),
-		new EffectDef( ()->MobEffects.MOVEMENT_SLOWDOWN, 0, 60.0f ),
-		new EffectDef( ()->MobEffects.DIG_SLOWDOWN, 0, 60.0f ),
-		new EffectDef( ()->MobEffects.SATURATION, 0, 60.0f )
+		new EffectDef( ()->MobEffects.WEAKNESS.value(), 0, 60.0f ),
+		new EffectDef( ()->MobEffects.SLOWNESS.value(), 0, 60.0f ),
+		new EffectDef( ()->MobEffects.MINING_FATIGUE.value(), 0, 60.0f ),
+		new EffectDef( ()->MobEffects.SATURATION.value(), 0, 60.0f )
 	);
 
 	static {

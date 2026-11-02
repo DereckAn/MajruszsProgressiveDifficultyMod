@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.items;
 
+import java.util.function.Function;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import com.majruszlibrary.data.Reader;
@@ -14,7 +15,7 @@ import com.majruszlibrary.platform.Side;
 import com.majruszlibrary.time.TimeHelper;
 import com.majruszsdifficulty.MajruszsDifficulty;
 import com.majruszsdifficulty.treasurebag.events.OnTreasureBagOpened;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class TreasureBag extends Item {
-	private final ResourceLocation lootId;
+	private final Identifier lootId;
 
 	static {
 		OnPlayerInteracted.listen( TreasureBag::openInHand )
@@ -38,41 +39,41 @@ public class TreasureBag extends Item {
 		MajruszsDifficulty.TREASURE_BAG_RIGHT_CLICK_NETWORK.addServerCallback( TreasureBag::openInInventory );
 	}
 
-	public static Supplier< TreasureBag > angler() {
-		return ()->new TreasureBag( MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_angler" ) );
+	public static Function< Properties, TreasureBag > angler() {
+		return properties->new TreasureBag( properties, MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_angler" ) );
 	}
 
-	public static Supplier< TreasureBag > elderGuardian() {
-		return ()->new TreasureBag( MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_elder_guardian" ) );
+	public static Function< Properties, TreasureBag > elderGuardian() {
+		return properties->new TreasureBag( properties, MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_elder_guardian" ) );
 	}
 
-	public static Supplier< TreasureBag > enderDragon() {
-		return ()->new TreasureBag( MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_ender_dragon" ) );
+	public static Function< Properties, TreasureBag > enderDragon() {
+		return properties->new TreasureBag( properties, MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_ender_dragon" ) );
 	}
 
-	public static Supplier< TreasureBag > pillager() {
-		return ()->new TreasureBag( MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_pillager" ) );
+	public static Function< Properties, TreasureBag > pillager() {
+		return properties->new TreasureBag( properties, MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_pillager" ) );
 	}
 
-	public static Supplier< TreasureBag > undeadArmy() {
-		return ()->new TreasureBag( MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_undead_army" ) );
+	public static Function< Properties, TreasureBag > undeadArmy() {
+		return properties->new TreasureBag( properties, MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_undead_army" ) );
 	}
 
-	public static Supplier< TreasureBag > warden() {
-		return ()->new TreasureBag( MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_warden" ) );
+	public static Function< Properties, TreasureBag > warden() {
+		return properties->new TreasureBag( properties, MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_warden" ) );
 	}
 
-	public static Supplier< TreasureBag > wither() {
-		return ()->new TreasureBag( MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_wither" ) );
+	public static Function< Properties, TreasureBag > wither() {
+		return properties->new TreasureBag( properties, MajruszsDifficulty.HELPER.getLocation( "gameplay/treasure_bag_wither" ) );
 	}
 
-	public TreasureBag( ResourceLocation lootId ) {
-		super( new Properties().stacksTo( 16 ).rarity( Rarity.UNCOMMON ) );
+	public TreasureBag( Properties properties, Identifier lootId ) {
+		super( properties.stacksTo( 16 ).rarity( Rarity.UNCOMMON ) );
 
 		this.lootId = lootId;
 	}
 
-	public ResourceLocation getLootId() {
+	public Identifier getLootId() {
 		return this.lootId;
 	}
 

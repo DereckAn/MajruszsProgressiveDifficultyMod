@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.features;
 
+import net.minecraft.world.entity.LivingEntity;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.events.OnEntitySpawned;
@@ -10,7 +11,7 @@ import com.majruszsdifficulty.events.base.CustomCondition;
 import com.majruszsdifficulty.gamestage.GameStage;
 import com.majruszsdifficulty.gamestage.GameStageHelper;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.monster.Evoker;
+import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -40,6 +41,6 @@ public class EvokerWithTotem {
 	}
 
 	private static void giveTotem( OnEntitySpawned data ) {
-		data.entity.setItemSlot( EquipmentSlot.MAINHAND, new ItemStack( Items.TOTEM_OF_UNDYING ) );
+		( ( LivingEntity )data.entity ).setItemSlot( EquipmentSlot.MAINHAND, new ItemStack( Items.TOTEM_OF_UNDYING ) );
 	}
 }

@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.items;
 
+import net.minecraft.tags.EntityTypeTags;
+import com.majruszlibrary.item.ItemHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import com.majruszlibrary.data.Reader;
@@ -18,7 +20,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
@@ -39,9 +40,9 @@ public class SoulJar extends Item {
 	private static final float MINE_BONUS = 0.15f;
 	private static final int LUCK_BONUS = 1;
 	private static final float SWIM_BONUS = 0.30f;
-	private static final AttributeHandler ARMOR_ATTRIBUTE = new AttributeHandler( "soul_jar_armor_bonus", ()->Attributes.ARMOR, AttributeModifier.Operation.ADDITION );
-	private static final AttributeHandler LUCK_ATTRIBUTE = new AttributeHandler( "soul_jar_luck_bonus", ()->Attributes.LUCK, AttributeModifier.Operation.ADDITION );
-	private static final AttributeHandler MOVE_ATTRIBUTE = new AttributeHandler( "soul_jar_movement_bonus", ()->Attributes.MOVEMENT_SPEED, AttributeModifier.Operation.MULTIPLY_TOTAL );
+	private static final AttributeHandler ARMOR_ATTRIBUTE = new AttributeHandler( "soul_jar_armor_bonus", ()->Attributes.ARMOR, AttributeModifier.Operation.ADD_VALUE );
+	private static final AttributeHandler LUCK_ATTRIBUTE = new AttributeHandler( "soul_jar_luck_bonus", ()->Attributes.LUCK, AttributeModifier.Operation.ADD_VALUE );
+	private static final AttributeHandler MOVE_ATTRIBUTE = new AttributeHandler( "soul_jar_movement_bonus", ()->Attributes.MOVEMENT_SPEED, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL );
 
 	static {
 		OnPlayerInteracted.listen( SoulJar::randomize )
@@ -50,7 +51,7 @@ public class SoulJar extends Item {
 		OnLootGenerated.listen( SoulJar::randomize );
 
 		OnEntityPreDamaged.listen( SoulJar::increaseDamage )
-			.addCondition( data->data.target instanceof Mob mob && mob.getMobType() == MobType.UNDEAD )
+			.addCondition( data->data.target instanceof Mob mob && mob.is( EntityTypeTags.UNDEAD ) )
 			.addCondition( data->data.attacker != null )
 			.addCondition( data->BonusInfo.has( data.attacker, BonusType.DAMAGE ) );
 
@@ -69,8 +70,8 @@ public class SoulJar extends Item {
 			.define( "SoulJarBonusMask", Reader.integer(), BonusInfo::getMask, BonusInfo::setMask );
 	}
 
-	public SoulJar() {
-		super( new Properties().stacksTo( 1 ).rarity( Rarity.UNCOMMON ) );
+	public SoulJar( Properties properties ) {
+		super( properties.stacksTo( 1 ).rarity( Rarity.UNCOMMON ) );
 	}
 
 	private static void randomize( OnPlayerInteracted data ) {
@@ -110,11 +111,11 @@ public class SoulJar extends Item {
 
 	private static void tryToRandomize( ItemStack itemStack ) {
 		if( itemStack.getItem() instanceof SoulJar ) {
-			Serializables.modify( new BonusInfo(), itemStack.getOrCreateTag(), bonusInfo->{
+			ItemHelper.updateCustomTag( itemStack, customTag->Serializables.modify( new BonusInfo(), customTag, bonusInfo->{
 				if( bonusInfo.getBonusTypes().isEmpty() ) {
 					bonusInfo.randomize();
 				}
-			} );
+			} ) );
 		}
 	}
 
@@ -174,7 +175,7 @@ public class SoulJar extends Item {
 
 		public static BonusInfo read( ItemStack itemStack ) {
 			BonusInfo bonusInfo = new BonusInfo();
-			CompoundTag tag = itemStack.getTag();
+			CompoundTag tag = ItemHelper.getCustomTag( itemStack );
 
 			return tag != null ? Serializables.read( bonusInfo, tag ) : bonusInfo;
 		}
@@ -247,8 +248,7 @@ public class SoulJar extends Item {
 	@Environment( EnvType.CLIENT )
 	public static class Client {
 		static {
-			OnItemRenderColorsGet.listen( Client::changeSoulColor )
-				.addCondition( data->data.itemStack.getItem() instanceof SoulJar );
+			// TODO(step 4): soul colors on the jar texture need 26.x item model tint sources (was OnItemRenderColorsGet)
 
 			OnItemAttributeTooltip.listen( Client::addTooltip )
 				.addCondition( data->SoulJar.canHaveSouls( data.itemStack ) )
@@ -256,13 +256,6 @@ public class SoulJar extends Item {
 
 			OnItemTooltip.listen( Client::addTooltip )
 				.addCondition( data->SoulJar.canHaveSouls( data.itemStack ) );
-		}
-
-		private static void changeSoulColor( OnItemRenderColorsGet data ) {
-			BonusInfo bonusInfo = BonusInfo.read( data.itemStack );
-			for( int idx = 0; idx < 3; ++idx ) {
-				data.add( idx + 1, bonusInfo.getBonus( idx ).map( BonusType::getColor ).orElse( 0xeeeeee - idx * 0x111111 ) );
-			}
 		}
 
 		private static void addTooltip( OnItemAttributeTooltip data ) {

@@ -28,7 +28,7 @@ public class ItemSetRequirement {
 	}
 
 	public Component getComponent() {
-		return this.item.get().getDescription();
+		return Component.translatable( this.item.get().getDescriptionId() );
 	}
 
 	public Component toComponent( ItemSet itemSet, List< ItemSetRequirement > requirementsMet ) {

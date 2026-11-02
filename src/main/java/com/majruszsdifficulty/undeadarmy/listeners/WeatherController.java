@@ -16,9 +16,6 @@ public class WeatherController {
 
 	private static void startRaining( OnUndeadArmyStarted data ) {
 		LevelHelper.startRaining( data.getLevel(), TimeHelper.toTicks( 60.0 * 30.0 ), true );
-		if( data.getLevel().getLevelData() instanceof ServerLevelData levelData ) {
-			levelData.setClearWeatherTime( 20 );
-		}
 	}
 
 	private static void freezeWater( OnUndeadArmyTicked data ) {

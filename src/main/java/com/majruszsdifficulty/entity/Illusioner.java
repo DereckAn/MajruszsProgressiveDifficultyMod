@@ -1,16 +1,17 @@
 package com.majruszsdifficulty.entity;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class Illusioner extends net.minecraft.world.entity.monster.Illusioner {
-	public static EntityType< Illusioner > createEntityType() {
+public class Illusioner extends net.minecraft.world.entity.monster.illager.Illusioner {
+	public static EntityType< Illusioner > createEntityType( ResourceKey< EntityType< ? > > key ) {
 		return EntityType.Builder.of( Illusioner::new, MobCategory.MONSTER )
 			.sized( 0.6f, 1.95f )
 			.clientTrackingRange( 8 )
-			.build( "illusioner" );
+			.build( key );
 	}
 
 	public Illusioner( EntityType< ? extends Illusioner > entityType, Level level ) {

@@ -12,6 +12,8 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 
 public class BloodMoonHelper {
+	public static final long TICKS_PER_DAY = 24000L; // 26.x: Level.TICKS_PER_DAY was removed (world clocks)
+
 	private static BloodMoon BLOOD_MOON = new BloodMoon();
 
 	static {
@@ -46,7 +48,7 @@ public class BloodMoonHelper {
 	}
 
 	public static long getRelativeDayTime() {
-		return Optional.ofNullable( Side.getServer() ).map( server->server.overworld().getDayTime() % Level.TICKS_PER_DAY ).orElse( 0L );
+		return Optional.ofNullable( Side.getServer() ).map( server->server.overworld().getOverworldClockTime() % BloodMoonHelper.TICKS_PER_DAY ).orElse( 0L );
 	}
 
 	public static boolean isActive() {

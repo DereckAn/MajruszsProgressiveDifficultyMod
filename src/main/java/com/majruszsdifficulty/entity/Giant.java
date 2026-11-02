@@ -1,5 +1,8 @@
 package com.majruszsdifficulty.entity;
 
+import net.minecraft.world.item.component.SwingAnimation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.resources.ResourceKey;
 import com.majruszlibrary.emitter.SoundEmitter;
 import com.majruszlibrary.entity.EntityHelper;
 import com.majruszlibrary.math.Random;
@@ -23,13 +26,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 
 public class Giant extends Monster {
-	public static EntityType< Giant > createEntityType() {
+	public static EntityType< Giant > createEntityType( ResourceKey< EntityType< ? > > key ) {
 		return EntityType.Builder.of( Giant::new, MobCategory.MONSTER )
 			.sized( 3.0f, 10.0f )
-			.build( "giant" );
+			.eyeHeight( 8.5f )
+			.build( key );
 	}
 
 	public static AttributeSupplier createAttributes() {
@@ -45,18 +49,14 @@ public class Giant extends Monster {
 	public Giant( EntityType< ? extends Monster > entityType, Level level ) {
 		super( entityType, level );
 
-		this.setPathfindingMalus( BlockPathTypes.LEAVES, 0.0f );
+		this.setPathfindingMalus( PathType.LEAVES, 0.0f );
 	}
 
 	@Override
-	public int getExperienceReward() {
+	protected int getBaseExperienceReward( ServerLevel level ) {
 		return Random.nextInt( 40, 60 );
 	}
 
-	@Override
-	public MobType getMobType() {
-		return MobType.UNDEAD;
-	}
 
 	@Override
 	public float maxUpStep() {
@@ -80,10 +80,6 @@ public class Giant extends Monster {
 		return SoundEvents.ZOMBIE_AMBIENT;
 	}
 
-	@Override
-	protected float getStandingEyeHeight( Pose pose, EntityDimensions dimensions ) {
-		return 8.5f;
-	}
 
 	@Override
 	protected SoundEvent getHurtSound( DamageSource source ) {
@@ -103,10 +99,6 @@ public class Giant extends Monster {
 	@Override
 	public void tick() {
 		super.tick();
-
-		if( this.isSunBurnTick() ) {
-			this.setSecondsOnFire( 8 );
-		}
 		if( TimeHelper.haveSecondsPassed( 0.5 ) ) {
 			EntityHelper.destroyBlocks( this, this.getBoundingBox().inflate( 0.6 ), ( blockPos, blockState )->{
 				return blockState.getBlock() instanceof LeavesBlock;
@@ -160,18 +152,18 @@ public class Giant extends Monster {
 			this.giant.setAggressive( this.raiseArmTicks >= 5 && this.getTicksUntilNextAttack() < this.getAttackInterval() / 2 );
 		}
 
-		@Override
-		protected double getAttackReachSqr( LivingEntity target ) {
+		private double getAttackReachSqr( LivingEntity target ) {
 			return 2.0 * this.mob.getBbWidth() * this.mob.getBbWidth() + target.getBbWidth();
 		}
 
 		@Override
-		protected void checkAndPerformAttack( LivingEntity target, double distance ) {
+		protected void checkAndPerformAttack( LivingEntity target ) {
+			double distance = this.mob.distanceToSqr( target );
 			if( distance <= this.getAttackReachSqr( target ) && this.getTicksUntilNextAttack() <= 0 ) {
 				double knockbackMultiplier = 1.0 - target.getAttributeValue( Attributes.KNOCKBACK_RESISTANCE );
 				this.resetAttackCooldown();
-				this.mob.swing( InteractionHand.MAIN_HAND );
-				this.mob.doHurtTarget( target );
+				this.mob.swing( InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT );
+				this.mob.doHurtTarget( ( ServerLevel )this.mob.level(), target );
 				target.addDeltaMovement( EntityHelper.getDirection2d( this.giant ).mul( -1.0 ).add( 0.0, 1.0, 0.0 ).mul( knockbackMultiplier ).vec3() );
 			}
 		}

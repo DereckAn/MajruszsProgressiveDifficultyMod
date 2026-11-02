@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.features;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.entity.EntityHelper;
@@ -12,8 +13,8 @@ import com.majruszsdifficulty.events.base.CustomCondition;
 import com.majruszsdifficulty.gamestage.GameStage;
 import com.majruszsdifficulty.gamestage.GameStageHelper;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.Drowned;
-import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.entity.monster.zombie.Drowned;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 
 public class DrownedLightningBolt {
 	private static boolean IS_ENABLED = true;
@@ -42,7 +43,7 @@ public class DrownedLightningBolt {
 	}
 
 	private static void spawn( OnEntityDamaged data ) {
-		EntityHelper.createSpawner( ()->EntityType.LIGHTNING_BOLT, data.getLevel() )
+		EntityHelper.createSpawner( ()->EntityTypes.LIGHTNING_BOLT, data.getLevel() )
 			.position( data.target.position() )
 			.spawn();
 	}

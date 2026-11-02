@@ -1,5 +1,7 @@
 package com.majruszsdifficulty.items;
 
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.server.level.ServerLevel;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.emitter.ParticleEmitter;
@@ -24,6 +26,10 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class SonicBoomScroll extends ScrollItem {
+	public SonicBoomScroll( Properties properties ) {
+		super( properties );
+	}
+
 	private static int ATTACK_DAMAGE = 14;
 	private static Range< Integer > ATTACK_RANGE = Range.of( 12, 30 );
 
@@ -59,8 +65,11 @@ public class SonicBoomScroll extends ScrollItem {
 				.forEach( target->{
 					Vec3 knockbackDirection = direction.mul( -1.0, 0.0, -1.0 ).vec3();
 
-					target.hurt( level.damageSources().indirectMagic( entity, entity ), ATTACK_DAMAGE );
-					target.knockback( 1.0, knockbackDirection.x, knockbackDirection.z );
+					DamageSource source = level.damageSources().indirectMagic( entity, entity );
+					if( level instanceof ServerLevel serverLevel ) {
+						target.hurtServer( serverLevel, source, ATTACK_DAMAGE );
+					}
+					target.knockback( 1.0, knockbackDirection.x, knockbackDirection.z, source, ATTACK_DAMAGE );
 				} );
 		}
 	}

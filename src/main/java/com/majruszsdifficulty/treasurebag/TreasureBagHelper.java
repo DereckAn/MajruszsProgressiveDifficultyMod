@@ -6,16 +6,14 @@ import com.majruszlibrary.events.OnGameInitialized;
 import com.majruszlibrary.events.OnLevelsLoaded;
 import com.majruszlibrary.events.OnPlayerLoggedIn;
 import com.majruszlibrary.item.LootHelper;
-import com.majruszlibrary.platform.Services;
 import com.majruszlibrary.registry.Registries;
 import com.majruszsdifficulty.MajruszsDifficulty;
 import com.majruszsdifficulty.data.WorldData;
 import com.majruszsdifficulty.items.TreasureBag;
-import com.majruszsdifficulty.loot.ILootPlatform;
-import com.majruszsdifficulty.mixin.IMixinLootPool;
-import com.majruszsdifficulty.mixin.IMixinLootPoolSingletonContainer;
+import com.majruszsdifficulty.mixin.IMixinLootTable;
+import com.majruszsdifficulty.mixin.IMixinUniformContainerBase;
 import com.majruszsdifficulty.treasurebag.events.OnTreasureBagOpened;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -26,10 +24,10 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 
+import java.util.Optional;
 import java.util.*;
 
 public class TreasureBagHelper {
-	private static final ILootPlatform PLATFORM = Services.load( ILootPlatform.class );
 	private static final List< TreasureBag > TREASURE_BAGS = new ArrayList<>();
 	private static Map< String, PlayerProgress > PLAYERS = new HashMap<>();
 
@@ -70,7 +68,7 @@ public class TreasureBagHelper {
 					unlockedIndices.add( idx );
 				}
 			}
-			TreasureBagHelper.sendToPlayer( player, new ResourceLocation( id ), bagProgress, unlockedIndices );
+			TreasureBagHelper.sendToPlayer( player, Identifier.parse( id ), bagProgress, unlockedIndices );
 		} );
 	}
 
@@ -84,7 +82,7 @@ public class TreasureBagHelper {
 		PlayerProgress playerProgress = PLAYERS.computeIfAbsent( uuid, key->new PlayerProgress() );
 		LootParams params = LootHelper.toGiftParams( player );
 		for( TreasureBag treasureBag : TREASURE_BAGS ) {
-			ResourceLocation bagId = Registries.ITEMS.getId( treasureBag );
+			Identifier bagId = Registries.ITEMS.getId( treasureBag );
 			BagProgress bagProgress = playerProgress.get( treasureBag );
 			if( bagProgress.items.isEmpty() ) {
 				TreasureBagHelper.createDefaultProgress( bagProgress, params, treasureBag.getLootId() );
@@ -139,36 +137,37 @@ public class TreasureBagHelper {
 		}
 	}
 
-	private static void sendToPlayer( Player player, ResourceLocation id, BagProgress bagProgress ) {
+	private static void sendToPlayer( Player player, Identifier id, BagProgress bagProgress ) {
 		TreasureBagHelper.sendToPlayer( player, id, bagProgress, List.of() );
 	}
 
-	private static void sendToPlayer( Player player, ResourceLocation id, BagProgress bagProgress, List< Integer > unlockedIndices ) {
+	private static void sendToPlayer( Player player, Identifier id, BagProgress bagProgress, List< Integer > unlockedIndices ) {
 		MajruszsDifficulty.TREASURE_BAG_PROGRESS_NETWORK.sendToClient( ( ServerPlayer )player, new Progress( id, bagProgress, unlockedIndices ) );
 	}
 
-	private static void createDefaultProgress( BagProgress bagProgress, LootParams params, ResourceLocation lootId ) {
+	private static void createDefaultProgress( BagProgress bagProgress, LootParams params, Identifier lootId ) {
 		for( LootItem lootItem : TreasureBagHelper.getLootItems( LootHelper.getLootTable( lootId ) ) ) {
 			lootItem.createItemStack( itemStack->{
-				ResourceLocation itemId = TreasureBagHelper.getId( itemStack );
+				Identifier itemId = TreasureBagHelper.getId( itemStack );
 				if( bagProgress.items.stream().noneMatch( itemProgress->itemProgress.id.equals( itemId ) ) ) {
-					bagProgress.items.add( new ItemProgress( itemId, false, ( ( IMixinLootPoolSingletonContainer )lootItem ).getQuality() ) );
+					bagProgress.items.add( new ItemProgress( itemId, false, ( ( IMixinUniformContainerBase )lootItem ).getQuality() ) );
 				}
-			}, new LootContext.Builder( params ).create( lootId ) );
+			}, new LootContext.Builder( params ).create( Optional.of( lootId ) ) );
 		}
 		bagProgress.items.sort( Comparator.comparingInt( a->-a.quality ) );
 	}
 
 	private static List< LootItem > getLootItems( LootTable lootTable ) {
-		return PLATFORM.getLootPools( lootTable )
-			.flatMap( lootPool->Arrays.stream( ( ( IMixinLootPool )lootPool ).getEntries() ) )
+		return ( ( IMixinLootTable )lootTable ).getPools()
+			.stream()
+			.flatMap( lootPool->lootPool.entries.stream() )
 			.filter( entry->entry instanceof LootItem )
 			.map( entry->( LootItem )entry )
 			.toList();
 	}
 
-	private static ResourceLocation getId( ItemStack itemStack ) {
-		return itemStack.is( Items.BOOK ) ? new ResourceLocation( "minecraft:enchanted_book" ) : Registries.ITEMS.getId( itemStack.getItem() );
+	private static Identifier getId( ItemStack itemStack ) {
+		return itemStack.is( Items.BOOK ) ? Identifier.parse( "minecraft:enchanted_book" ) : Registries.ITEMS.getId( itemStack.getItem() );
 	}
 
 	public static class PlayerProgress {
@@ -184,11 +183,11 @@ public class TreasureBagHelper {
 	}
 
 	public static class ItemProgress {
-		public ResourceLocation id;
+		public Identifier id;
 		public boolean isUnlocked;
 		public int quality;
 
-		public ItemProgress( ResourceLocation id, boolean isUnlocked, int quality ) {
+		public ItemProgress( Identifier id, boolean isUnlocked, int quality ) {
 			this.id = id;
 			this.isUnlocked = isUnlocked;
 			this.quality = quality;
@@ -205,11 +204,11 @@ public class TreasureBagHelper {
 	}
 
 	public static class Progress {
-		public ResourceLocation id;
+		public Identifier id;
 		public BagProgress bagProgress;
 		public List< Integer > unlockedIndices;
 
-		public Progress( ResourceLocation id, BagProgress bagProgress, List< Integer > unlockedIndices ) {
+		public Progress( Identifier id, BagProgress bagProgress, List< Integer > unlockedIndices ) {
 			this.id = id;
 			this.bagProgress = bagProgress;
 			this.unlockedIndices = unlockedIndices;

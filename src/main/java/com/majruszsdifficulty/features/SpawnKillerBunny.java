@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.features;
 
+import net.minecraft.core.component.DataComponents;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.events.OnEntitySpawned;
@@ -9,7 +10,7 @@ import com.majruszsdifficulty.data.Config;
 import com.majruszsdifficulty.events.base.CustomCondition;
 import com.majruszsdifficulty.gamestage.GameStage;
 import com.majruszsdifficulty.gamestage.GameStageHelper;
-import net.minecraft.world.entity.animal.Rabbit;
+import net.minecraft.world.entity.animal.rabbit.Rabbit;
 
 public class SpawnKillerBunny {
 	private static boolean IS_ENABLED = true;
@@ -37,6 +38,6 @@ public class SpawnKillerBunny {
 	}
 
 	private static void transformToKiller( OnEntitySpawned data ) {
-		( ( Rabbit )data.entity ).setVariant( Rabbit.Variant.EVIL );
+		( ( Rabbit )data.entity ).setComponent( DataComponents.RABBIT_VARIANT, Rabbit.Variant.EVIL ); // 26.x: setVariant is private
 	}
 }

@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.effects.bleeding;
 
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.events.base.Condition;
@@ -13,9 +14,9 @@ import com.majruszsdifficulty.events.OnBleedingTooltip;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Spider;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.monster.spider.Spider;
+import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
@@ -53,13 +54,13 @@ public class BleedingSources {
 	public static class Bite {
 		private static boolean IS_ENABLED = true;
 		private static float CHANCE = 0.5f;
-		private static List< EntityType< ? > > BLACKLISTED_ANIMALS = List.of( EntityType.LLAMA );
+		private static List< EntityType< ? > > BLACKLISTED_ANIMALS = List.of( EntityTypes.LLAMA );
 
 		static {
 			OnBleedingCheck.listen( OnBleedingCheck::trigger )
 				.addCondition( Condition.chance( ()->CHANCE ) )
 				.addCondition( data->IS_ENABLED )
-				.addCondition( data->!data.source.isIndirect() )
+				.addCondition( data->data.source.isDirect() )
 				.addCondition( data->data.attacker instanceof Animal || data.attacker instanceof Zombie || data.attacker instanceof Spider )
 				.addCondition( data->!BLACKLISTED_ANIMALS.contains( data.attacker.getType() ) );
 

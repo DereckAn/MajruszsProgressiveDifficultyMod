@@ -5,41 +5,41 @@ import com.majruszlibrary.item.LootHelper;
 import com.majruszlibrary.text.TextHelper;
 import com.majruszsdifficulty.MajruszsDifficulty;
 import net.minecraft.ChatFormatting;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 
 import java.util.List;
 
 public class EnderiumSmithingTemplate extends SmithingTemplateItem {
-	private static final ResourceLocation ID = MajruszsDifficulty.HELPER.getLocation( "gameplay/enderium_upgrade_smithing_template" );
+	private static final Identifier ID = MajruszsDifficulty.HELPER.getLocation( "gameplay/enderium_upgrade_smithing_template" );
 
 	static {
 		OnLootGenerated.listen( EnderiumSmithingTemplate::addToChest )
 			.addCondition( data->data.lootId.equals( BuiltInLootTables.END_CITY_TREASURE ) );
 	}
 
-	public EnderiumSmithingTemplate() {
+	public EnderiumSmithingTemplate( Properties properties ) {
 		super(
 			TextHelper.translatable( "majruszsdifficulty.smithing.enderium.applies_to" ).withStyle( ChatFormatting.BLUE ),
 			TextHelper.translatable( "majruszsdifficulty.smithing.enderium.ingredients" ).withStyle( ChatFormatting.BLUE ),
-			TextHelper.translatable( "majruszsdifficulty.smithing.enderium.upgrade" ).withStyle( ChatFormatting.GRAY ),
 			TextHelper.translatable( "majruszsdifficulty.smithing.enderium.base_slot" ).withStyle( ChatFormatting.GRAY ),
 			TextHelper.translatable( "majruszsdifficulty.smithing.enderium.additions_slot" ).withStyle( ChatFormatting.GRAY ),
 			List.of(
-				new ResourceLocation( "item/empty_armor_slot_helmet" ),
-				new ResourceLocation( "item/empty_slot_sword" ),
-				new ResourceLocation( "item/empty_armor_slot_chestplate" ),
-				new ResourceLocation( "item/empty_slot_pickaxe" ),
-				new ResourceLocation( "item/empty_armor_slot_leggings" ),
-				new ResourceLocation( "item/empty_slot_axe" ),
-				new ResourceLocation( "item/empty_armor_slot_boots" ),
-				new ResourceLocation( "item/empty_slot_hoe" ),
-				new ResourceLocation( "item/empty_slot_shovel" )
+				Identifier.withDefaultNamespace( "container/slot/helmet" ),
+				Identifier.withDefaultNamespace( "container/slot/sword" ),
+				Identifier.withDefaultNamespace( "container/slot/chestplate" ),
+				Identifier.withDefaultNamespace( "container/slot/pickaxe" ),
+				Identifier.withDefaultNamespace( "container/slot/leggings" ),
+				Identifier.withDefaultNamespace( "container/slot/axe" ),
+				Identifier.withDefaultNamespace( "container/slot/boots" ),
+				Identifier.withDefaultNamespace( "container/slot/hoe" ),
+				Identifier.withDefaultNamespace( "container/slot/shovel" )
 			),
 			List.of(
-				new ResourceLocation( "item/empty_slot_ingot" )
-			)
+				Identifier.withDefaultNamespace( "container/slot/ingot" )
+			),
+			properties
 		);
 	}
 

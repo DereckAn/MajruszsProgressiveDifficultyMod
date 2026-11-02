@@ -1,5 +1,12 @@
 package com.majruszsdifficulty.features;
 
+import java.util.List;
+import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.component.Fireworks;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.EntityTypes;
 import com.majruszlibrary.data.Reader;
 import com.majruszlibrary.data.Serializables;
 import com.majruszlibrary.events.OnEntitySpawned;
@@ -14,7 +21,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.monster.Pillager;
+import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -35,7 +42,7 @@ public class PillagerWithFireworks {
 			.addCondition( data->IS_ENABLED )
 			.addCondition( CustomCondition.check( REQUIRED_GAME_STAGE ) )
 			.addCondition( data->!data.isLoadedFromDisk )
-			.addCondition( data->data.entity.getType().equals( EntityType.PILLAGER ) );
+			.addCondition( data->data.entity.getType().equals( EntityTypes.PILLAGER ) );
 
 		Serializables.getStatic( Config.Features.class )
 			.define( "pillager_with_fireworks", PillagerWithFireworks.class );
@@ -54,16 +61,13 @@ public class PillagerWithFireworks {
 		Pillager pillager = ( Pillager )data.entity;
 		ItemStack crossbow = pillager.getMainHandItem();
 		if( crossbow.is( Items.CROSSBOW ) && Random.check( CROSSBOW_MULTISHOT_CHANCE ) ) {
-			crossbow.enchant( Enchantments.MULTISHOT, 1 );
+			crossbow.enchant( pillager.level().registryAccess().lookupOrThrow( Registries.ENCHANTMENT ).getOrThrow( Enchantments.MULTISHOT ), 1 );
 		}
 
 		ItemStack fireworks = new ItemStack( Items.FIREWORK_ROCKET, FIREWORK_COUNT );
-		CompoundTag explosionTag = new CompoundTag();
-		explosionTag.putInt( "Type", 0 );
-		explosionTag.putIntArray( "Colors", new int[]{ 0x4a2a30, 0x666666 } );
-		ListTag explosionsTag = new ListTag();
-		explosionsTag.add( explosionTag );
-		fireworks.getOrCreateTagElement( "Fireworks" ).put( "Explosions", explosionsTag );
+		// 26.x: fireworks data is a component (was the "Fireworks" NBT tag); flight duration 1 matches the old default
+		FireworkExplosion explosion = new FireworkExplosion( FireworkExplosion.Shape.SMALL_BALL, IntList.of( 0x4a2a30, 0x666666 ), IntList.of(), false, false );
+		fireworks.set( DataComponents.FIREWORKS, new Fireworks( 1, List.of( explosion ) ) );
 		pillager.setItemSlot( EquipmentSlot.OFFHAND, fireworks );
 		pillager.setDropChance( EquipmentSlot.OFFHAND, FIREWORK_DROP_CHANCE );
 	}
