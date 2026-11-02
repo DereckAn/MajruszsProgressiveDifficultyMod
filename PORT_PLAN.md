@@ -11,12 +11,13 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [x] Step 4: Custom mobs (2026-11-02, mobs and item visuals tested in-game by the user)
 - [x] Step 5: Blood moon visuals (2026-11-02, tested in-game by the user)
 - [x] Step 6: Polish and publish (2026-11-02: release v26.3-1.9.10, library fork DereckAn/MajruszLibrary)
-- [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
+- [ ] Step 7: Merge with Improved Mobs into one mod (ideas in "Step 7 ideas" below; also use the overlap table)
 
-**Current step:** Step 7 (merge with Improved Mobs) — not planned yet; plan it with the user first
+**Current step:** Step 7 (merge with Improved Mobs) — not planned yet. Start by reading "Step 7 ideas", then survey both mods and propose a plan to the user before writing code.
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
+- 2026-11-02: Step 7 ideas recorded (see "Step 7 ideas"); the user will decide the details when planning.
 - 2026-11-02: user will play this mod **alone** (without Improved Mobs) for now, so keep all config defaults as they are. Merging both mods' logic into one mod is a new Step 7, after Step 6.
 
 ### Known problems
@@ -164,6 +165,8 @@ It can be done, but it's the biggest of the user's mods so far.
 **Improved Mobs block breaking (checked in its source):** about 30% of mobs (`Breaker Chance` 0.3, from difficulty 0) can break blocks and get a diamond pickaxe or iron axe. By default they only break glass, glass panes, doors and fence gates (`Block Break Whitelist`). Setting `Breaklist as Blacklist = true` turns the list into a blacklist, so they can dig through stone and dirt toward the player, including up and down. They only break what their tool can harvest, unless `Ignore Harvest Check` is on, and broken blocks can be restored after a delay (`Restore delay`).
 
 ## Repos
+
+- **Improved Mobs (for Step 7):** the finished 26.3 port is in `~/Documents/GIT/improvedmods` (`ImprovedMobs/` + trimmed `TenshiLib/`); read its `CLAUDE.md`. In the test profile it's parked in `mods-disabled/`.
 
 - **This repo** is the user's fork, `git@github.com:DereckAn/MajruszsProgressiveDifficultyMod.git`, branch `1.20.X`. Upstream is `Majrusz/MajruszsProgressiveDifficultyMod`.
 - **Required library:** `https://github.com/Majrusz/MajruszLibrary`, branch `1.20.X`. Clone it to `~/Documents/GIT/MajruszLibrary`. The user has no fork yet; **ask before forking it** to their account.
