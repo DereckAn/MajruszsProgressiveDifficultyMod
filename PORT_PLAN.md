@@ -1,0 +1,159 @@
+# Port plan: Majrusz's Progressive Difficulty → Minecraft 26.3 (Fabric)
+
+This is the progress file for a multi-session port. **Any Claude Code session working on this repo reads this file first and continues from the current step.** Update the Status section after every step.
+
+## Status
+
+- [x] Step 0: Survey (2026-11-02, results in "Survey results" below)
+- [ ] Step 1: Build setup
+- [ ] Step 2: Library port
+- [ ] Step 3: Gameplay (first playable version)
+- [ ] Step 4: Custom mobs
+- [ ] Step 5: Blood moon visuals
+- [ ] Step 6: Polish and publish
+
+**Current step:** Step 1 (waiting for the user to read the Step 0 summary and decide the Improved Mobs overlaps)
+
+### Decisions
+- 2026-11-02: user chose to do Step 0 before Step 1.
+
+### Known problems
+_(record open issues here)_
+
+---
+
+## Survey results (Step 0, 2026-11-02)
+
+Library cloned to `~/Documents/GIT/MajruszLibrary` (branch `1.20.X`, upstream, not forked).
+The closure script is in the session scratchpad; rerun it by following imports from `common/` + `fabric/` of the mod.
+
+### Size
+- **Mod:** 160 Java files in `common`, 2 in `fabric`. Resources: 32 advancements, 38 loot tables, 24 recipes, 16 tags, 10 worldgen, 1 damage type, 103 models, 82 textures, 12 langs, and `data/.../custom` + `assets/.../custom` (the library's JSON model/animation format for the custom mobs).
+- **Library (common + fabric):** 190 non-mixin classes, 71 mixins (58 common, 13 fabric).
+- **Library needed by the mod:** ~148 classes (events 49, data/config 27, modhelper 8, platform 7, registry 7, animations 6, rest small) and **~45 mixins**. The other ~42 classes and ~26 mixins (trades, breeding, taming, brewing, brushing, crafting, phantoms, noise, creative tab icons, item decorations…) can be dropped.
+
+### Features and the library parts they use
+| Feature | Mod code | Library parts |
+|---|---|---|
+| Game stages (Normal/Expert/Master, per player or global) | `gamestage/`, `data/WorldData` | Serializables/Reader (config + save data), Command, Events (OnEntityDied, OnLevelsLoaded, OnPlayerLoggedIn, OnDimensionChanged, OnClampedRegionalDifficultyGet), custom advancement trigger (IMixinCriteriaTriggers) |
+| Undead Army | `undeadarmy/` (25 files) | Serializables, Command, ParticleEmitter, SoundEmitter, LevelHelper, LootHelper, TimeHelper, OnServerTicked, OnEntityDied, OnLevelsLoaded; boss bar |
+| Blood moon (logic) | `bloodmoon/` | Command, OnServerTicked, OnClientTicked, OnMobSpawnLimitGet (MobCategory mixin), OnMobSpawnRateGet (NaturalSpawner mixin), network sync |
+| Blood moon (visuals) | own mixins `MixinFogRenderer`, `MixinLevelRenderer`, `MixinLightTexture` | none (mod's own client mixins) |
+| Effects: Bleeding, Bleeding Immunity, Glass Regeneration | `effects/` | EffectDef/EffectHelper, OnEntityDamaged/PreDamaged/Ticked/EffectCheck/Died, OnItemEaten, OnItemTooltip/AttributeTooltip, OnGuiOverlaysRegistered (HUD), ParticleEmitter |
+| Items (bandages, scrolls, Soul Jar, Ender Pouch, Recall Potion, Wither Sword, Enderium tools/armor, Tattered armor, Battle Standard, Cerberus Fang, smithing template, spawn eggs) | `items/` (23), `itemsets/` (5) | ItemHelper, AttributeHandler, OnItemRendered (hand renderer mixin), OnEntityModelSetup (HumanoidModel mixin), OnItemRenderColorsGet, OnItemInventoryClicked, OnPlayerInteracted, OnLootGenerated, OnBreakSpeedGet, OnChorusFruitEaten, OnEnderManAngered, OnLootingLevelGet |
+| Blocks (Enderium block/ore, fragile + infested end stone, infernal sponge) + ore worldgen | `blocks/`, `data/.../worldgen` | BlockHelper, OnBlockPlaced (ServerLevel mixin) |
+| Treasure bags (7 kinds) | `treasurebag/`, `items/TreasureBag` | LootHelper, OnEntityDied/Damaged, OnItemFished, OnRaidDefeated, network (opening screen), Command |
+| Custom mobs: Tank, Giant, Cerberus, Cursed Armor, Creeperling (+ a modded Illusioner using the vanilla model) | `entity/` (17) | **animations/** (JSON models + animations: ModelDef, ModelParts, Animations), OnEntitySpawned, OnExploded, OnEntityTicked |
+| Mob tweaks (`features/`, 22 classes: stronger mobs, creeper changes, jockeys, mob groups, double loot, spawn blockers, killer bunny, player zombie, evoker totem, pillager fireworks…) | `features/` | AttributeHandler, OnEntitySpawned, OnExploded, OnLootGenerated, OnExpOrbPickedUp, OnMobSpawnLimitGet/RateGet |
+| Loot (CurseRandomly function, loot pool injection) | `loot/`, mixins `IMixinLootPool*` | library loot mixins (`MixinLootTable`, `LootTable2`, `LootTableBuilder`, `LootDataType`) |
+| Configs | `data/Config` + `static {}` blocks everywhere | `data/` (Serializables, Reader): one JSON config, synced to clients over the network |
+| Commands | `*Command(s).java` | `command/` (Command, CommandData, IParameter) + `MixinCommands` |
+
+### Riskiest areas
+1. **Custom mob models/animations** (`animations/` + `assets/.../custom` JSON). The library drives `ModelPart`s directly from its own JSON format; 26.x renderers use render states, so this system has to be rewritten, not renamed. Step 4.
+2. **Blood moon visuals**: `FogRenderer`, `LevelRenderer` and `LightTexture` were rewritten (fog environments, lightmap shader). The mixins can't just be retargeted; expect new hooks. Step 5.
+3. **Item rendering hooks** (`OnItemRendered`, `OnEntityModelSetup`, item colors): item rendering moved to item models/`ItemStackRenderState` in 1.21.4. Affects Soul Jar, scrolls and Tattered/Enderium armor visuals.
+4. **Loot mixins** (4 library + 2 mod): replace with Fabric `LootTableEvents` instead of porting.
+5. **Items/armor/tools/potions/spawn eggs**: all data-driven since 1.21.2–1.21.5 (`setId`, `ToolMaterial`, `ArmorMaterial` → equipment assets, spawn egg components, `assets/<ns>/items/*.json` for every item).
+6. **Networking** (`NetworkObject`) → `CustomPacketPayload` + `StreamCodec`.
+7. **Datapack JSON**: 1.20.1 → 26.x folder renames and format changes on ~120 files (recipes, loot, advancements, tags, worldgen).
+
+Low risk: the config/serialization core, events bus, math/text/time helpers (plain Java).
+
+**Mixin shortcut:** about half of the ~45 needed library mixins can be replaced by Fabric API events (server/client ticks, server start, commands, player join, entity load, death, damage, tooltips, HUD, loot tables), which removes crash risk instead of porting it.
+
+### Overlaps with Improved Mobs
+| This mod | Improved Mobs | Effect when both run |
+|---|---|---|
+| `mobs_spawn_stronger` (+15%/+30% health, +10%/+20% damage at Expert/Master) | difficulty attribute scaling (`attributes.json`) | **stacks**: both multiply mob health/damage |
+| `spawn_rate_increaser` + blood moon spawn rate/limit | `Night Monster Cap Multiplier` | **stacks**: many more night mobs |
+| Game stages raise vanilla regional difficulty | own difficulty value | independent, both make mobs harder |
+| Evoker totems, pillager fireworks, player zombies, Undead Army gear | `Equipment Chance` / enchanting | IM may give extra gear to these mobs; minor |
+| Creeper changes (charged, chain reaction, explode behind walls) | block breaking AI, TNT destruction | minor, different behaviours |
+
+---
+
+## Assessment (2026-11-01)
+
+It can be done, but it's the biggest of the user's mods so far.
+
+| | Improved Mobs (done) | This mod |
+|---|---|---|
+| Starting version | 1.21.1 | **1.20.1** (bigger jump) |
+| Mod code | 136 files | 166 files |
+| Required library | TenshiLib: trimmed to ~80 files | **Majrusz Library: 297 files, 79 mixins**, which the mod uses heavily |
+| Custom mobs with 3D models | none | **5**: Tank, Giant, Cerberus, Cursed Armor, Creeperling |
+| Visual effects | small HUD | Blood moon sky and fog changes |
+| Original author | active | **Abandoned** (both mod and library stopped at 1.20.1 in April 2024) |
+
+**Hard parts:**
+- **Rendering.** The custom mobs and the blood moon sky depend on rendering, which Minecraft rewrote in 1.21.2 (render states) and 1.21.5 (render pipelines). Unlike TenshiLib, it can't be skipped: the mobs are part of the mod.
+- **The library.** Majrusz Library hooks deep into the game with 79 mixins; each one can crash the game at startup if it no longer matches.
+
+**Good news:** both the mod and the library are **MIT licensed**, so the port can be published and shared. Keep the MIT license and credit Majrusz.
+
+**Overlap with Improved Mobs:** both mods make mobs stronger over time, give mobs gear and raise their stats. Running both stacks the effects and may conflict. Step 0 must list the overlaps so the user can decide what to turn off in which config.
+
+## Repos
+
+- **This repo** is the user's fork, `git@github.com:DereckAn/MajruszsProgressiveDifficultyMod.git`, branch `1.20.X`. Upstream is `Majrusz/MajruszsProgressiveDifficultyMod`.
+- **Required library:** `https://github.com/Majrusz/MajruszLibrary`, branch `1.20.X`. Clone it to `~/Documents/GIT/MajruszLibrary`. The user has no fork yet; **ask before forking it** to their account.
+
+## Ground rules
+
+- Load the `minecraft-26-port` skill (migration tables, build setup, rename/remap scripts, mixin checker) and the `install-mod` skill (installs the jar into the CurseForge test profile).
+- Read `~/Documents/GIT/improvedmods/CLAUDE.md`: a finished port with the same workflow, including how the user tests.
+- Fabric only: remove Forge and NeoForge.
+- Port only the parts of Majrusz Library the mod actually uses (like the trimmed TenshiLib in the improvedmods project). Bundle it into the mod jar with Fabric jar-in-jar so players install one mod.
+- Run Gradle with `JAVA_HOME=/usr/lib/jvm/java-27-openjdk` (Loom 1.19.x and Gradle 9.8+ need a Java 25+ runtime; the target is Java 25).
+- Before every in-game test, run the skill's `checkmixins.py` against `~/Documents/curseforge/minecraft/Install/versions/26.3/26.3.jar`.
+- If a feature can't be kept the way it was, **ask the user** before changing or removing it.
+- Work on a new `26.3` branch and commit at the end of each step. **Push only when the user says so.**
+- Stop at the end of each step, tell the user in plain words what to test in-game, and wait for their result. Logs are in `~/Documents/curseforge/minecraft/Instances/test/logs/latest.log`.
+
+## Plan
+
+**Step 0 - Survey (no code changes).** Clone the library. List every feature of the mod and which Majrusz Library parts each one uses:
+- game stages
+- Undead Army
+- blood moon
+- effects such as bleeding
+- items and blocks
+- treasure bags
+- the 5 custom mobs
+- configs and commands
+
+Then estimate which library parts are needed and which can be dropped, flag the riskiest areas, and list the overlaps with Improved Mobs. Write the results into this file and show the user a summary before continuing.
+
+**Step 1 - Build setup.**
+- Set up a Fabric-only 26.3 build: Loom 1.19.x, Gradle 9.8+, Java 25 target, Fabric API for 26.3.
+- Set up the trimmed library as its own project, published to mavenLocal and included jar-in-jar.
+
+**Step 2 - Library port.** Port the needed library code, leaving custom mob rendering and animation for step 4. Get it compiling, then check every library mixin against the 26.3 jar.
+
+**Step 3 - Gameplay (first playable version).**
+- Port everything except custom mob rendering and blood moon visuals: game stages, Undead Army, blood moon logic, effects, items, blocks, treasure bags, configs and commands.
+- Check every datapack JSON (loot tables, recipes, tags, advancements) against the 26.3 format.
+- If the 5 custom mobs' rendering isn't ready, leave them registered but temporarily unspawnable.
+- Install with `/install-mod`; the user tests in a new world.
+
+**Step 4 - Custom mobs.** Port the models, renderers and animations for Tank, Giant, Cerberus, Cursed Armor and Creeperling to the 26.x rendering system (render states, 1.21.5+ rendering). Re-enable their spawning. The user tests each mob in-game.
+
+**Step 5 - Blood moon visuals.** Port the sky, fog and level rendering mixins. The user tests a blood moon night.
+
+**Step 6 - Polish and publish (only when the user says so).**
+- Clean up, and update the README and changelog.
+- Push the `26.3` branch to the user's fork (and to the library fork).
+- Create a GitHub pre-release crediting Majrusz.
+
+Expect steps 2 and 4 to take the longest. Step 3 is the first point where the mod is playable.
+
+## How to start or continue
+
+Open Claude Code in this repo (`~/Documents/GIT/MajruszsProgressiveDifficultyMod`) and say:
+
+```text
+Read PORT_PLAN.md and start with the current step.
+```
+
+In later sessions, the same sentence continues from wherever the Status section says.
