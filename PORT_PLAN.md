@@ -13,7 +13,7 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [ ] Step 6: Polish and publish
 - [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
-**Current step:** Step 6 (polish and publish) — only when the user says so
+**Current step:** Step 6 (2026-11-02: cleanup done, mod branch pushed; waiting for the user to fork/push the library and create the release — auto mode blocks creating public repos/releases)
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
@@ -51,6 +51,11 @@ Library branch `26.3` in `~/Documents/GIT/MajruszLibrary`: compiles, 136 classes
 
 ### Blood moon visuals (Step 5)
 - `MixinClientLevel` adds time-based environment attribute layers that tint `FOG_COLOR`, `SKY_COLOR` and `SKY_LIGHT_COLOR` (same ratios as 1.20.1). `MixinSkyRenderer` swaps the moon vertex buffer for red phase sprites (`textures/environment/celestial/blood_moon/*.png`, split from the old sheet; the vanilla celestials atlas picks them up) and tints the stars.
+
+### Publishing (Step 6)
+- Both repos got README, changelog entry and an MIT `LICENSE` (Majrusz + port). The `custom.update` feed was removed and contact links point at the forks.
+- Mod: `26.3` pushed to `origin` (DereckAn fork). Library: fork as remote `fork` (`origin` stays Majrusz upstream), push `26.3` to `fork`. Never PR the trimmed library upstream.
+- Release: tag `v26.3-1.9.10`, pre-release, jar `build/libs/majruszs-difficulty-fabric-26.3-1.9.10.jar`.
 
 ### Build notes (Step 1)
 - Both repos are now **single-module Fabric Loom projects** (`src/` = old `common/src` + `fabric/src`); Forge, NeoForge and the CurseForge/Modrinth upload tasks are gone. Branch `26.3` in both (the library branch is local only, no fork yet).
