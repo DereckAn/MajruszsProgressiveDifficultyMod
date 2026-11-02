@@ -4,7 +4,9 @@
   "version": "${mod_version}",
   "name": "${mod_display_name}",
   "description": "${mod_description}",
-  "authors": [ "${mod_authors}" ],
+  "authors": [
+    "${mod_authors}"
+  ],
   "contact": {
     "homepage": "${mod_homepage}",
     "issues": "${mod_issues}",
@@ -14,7 +16,9 @@
   "icon": "assets/${mod_id}/${mod_logo}",
   "environment": "*",
   "entrypoints": {
-    "main": [ "com.${mod_id}.Initializer" ]
+    "main": [
+      "com.${mod_id}.Initializer"
+    ]
   },
   "mixins": [
     "${mod_id}-common.mixins.json"
@@ -24,7 +28,7 @@
     "minecraft": "${fabric_minecraft_version_range}",
     "majruszlibrary": "${fabric_majruszlibrary_version_range}"
   },
-  "custom": {
-    "update": "${mod_update}"
-  }
+  "contributors": [
+    "DereckAn (unofficial 26.3 port)"
+  ]
 }
