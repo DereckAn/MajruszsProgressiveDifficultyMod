@@ -143,6 +143,26 @@ It can be done, but it's the biggest of the user's mods so far.
 
 **Overlap with Improved Mobs:** both mods make mobs stronger over time, give mobs gear and raise their stats. Running both stacks the effects and may conflict. Step 0 must list the overlaps so the user can decide what to turn off in which config.
 
+## Step 7 ideas (from the user, 2026-11-02, not planned or implemented yet)
+
+**Difficulty source:** Improved Mobs' difficulty value drives everything (it increases over time).
+- Every **10 difficulty levels**: an Undead Army starts (almost certainly).
+- Every **20 difficulty levels**: a blood moon.
+
+**Tiers that change what the Undead Army and blood moon spawn:**
+1. **Base:** current behaviour.
+2. **Player has been to the Nether:** more "elite" mobs in the hordes and blood moons, e.g. more Cerberus, giant skeletons, and maybe mutant mobs from [Mutant Monsters](https://github.com/Fuzss/mutant-monsters).
+3. **Player has been to the End and reached Expert and Master game stages (hardest difficulty):** hordes spawn many more zombies, evokers, Cursed Armor, witches and Giants, all with more health and damage.
+4. **Tier 3 plus Improved Mobs difficulty above 300:** huge numbers of enemies and elite mobs, from vanilla and from the mods.
+
+**Notes to check when planning:**
+- "Giant skeletons" don't exist in either mod (there's the Giant, a giant zombie); a new mob or a scaled-up skeleton would be needed.
+- Mutant Monsters (by Fuzss) has Fabric builds for 26.3 (26.3.0, 26.3.1). It's **AGPL-3.0**, so it should stay an optional separate mod (spawned only if installed), not copied into this MIT mod.
+- Improved Mobs is ARR; merging its code into one mod needs the same care as its port (author was asked via an issue).
+- Improved Mobs mobs can already mine (see the answer below); decide whether horde mobs should dig to underground players.
+
+**Improved Mobs block breaking (checked in its source):** about 30% of mobs (`Breaker Chance` 0.3, from difficulty 0) can break blocks and get a diamond pickaxe or iron axe. By default they only break glass, glass panes, doors and fence gates (`Block Break Whitelist`). Setting `Breaklist as Blacklist = true` turns the list into a blacklist, so they can dig through stone and dirt toward the player, including up and down. They only break what their tool can harvest, unless `Ignore Harvest Check` is on, and broken blocks can be restored after a delay (`Restore delay`).
+
 ## Repos
 
 - **This repo** is the user's fork, `git@github.com:DereckAn/MajruszsProgressiveDifficultyMod.git`, branch `1.20.X`. Upstream is `Majrusz/MajruszsProgressiveDifficultyMod`.
