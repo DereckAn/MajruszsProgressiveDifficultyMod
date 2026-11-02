@@ -13,7 +13,7 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [ ] Step 6: Polish and publish
 - [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
-**Current step:** Step 4 (custom mobs)
+**Current step:** Step 4 (mobs tested OK by the user 2026-11-02; item visuals built and installed, waiting for the user's test)
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
@@ -43,6 +43,11 @@ Library branch `26.3` in `~/Documents/GIT/MajruszLibrary`: compiles, 136 classes
 - **Still TODO (Step 4):** shard locator distance item property, Soul Jar soul tint colors and shield overlay, scroll casting arm pose, custom mob models.
 - In-game fixes after the first launches: ResourceLoader created before NetworkHandler; ClassFinder now scans Fabric mod root paths (jar-in-jar); worldgen `configured_feature` → `worldgen/feature` and flattened JSON; advancements `recipe` → `recipes`, background only on roots; **loot tables use `condition` (one object, `all_of` for several), `modifier`, and `type` as the id key — the old `conditions`/`functions`/`function` keys are silently ignored by 26.x.**
 - Test profile: Improved Mobs and Forge Config API Port moved to `~/Documents/curseforge/minecraft/Instances/test/mods-disabled/` (user plays this mod alone for now).
+
+### Custom mobs and item visuals (Step 4)
+- Each mob renderer extracts its own render state that carries the entity's `Animations`; models read only that state (`walkAnimationPos/Speed`, `yRot/xRot`, `ageInTicks`). Giant uses vanilla's zombie model/armor layers ×5; Cursed Armor bakes vanilla's zombie armor meshes into `CursedArmorModel` (its model JSON now has `hat` under `head`, which 26.x HumanoidModel requires); Illusioner subclasses vanilla's renderer for the mod texture.
+- Item visuals as 26.x item-model types registered in `client/ItemModelExtensions`: `majruszsdifficulty:shard_distance` (range_dispatch) and `majruszsdifficulty:soul_color` (tint). The shard locator's scan cache now lives in client memory instead of the item's data.
+- Mod client mixins: `MixinShieldSpecialRenderer` (Soul Jar shield overlay), `MixinHumanoidModel` + `MixinFirstPersonHandsAndItemsRenderer` (scroll casting pose). The library's parked rendering hooks were removed.
 
 ### Build notes (Step 1)
 - Both repos are now **single-module Fabric Loom projects** (`src/` = old `common/src` + `fabric/src`); Forge, NeoForge and the CurseForge/Modrinth upload tasks are gone. Branch `26.3` in both (the library branch is local only, no fork yet).
