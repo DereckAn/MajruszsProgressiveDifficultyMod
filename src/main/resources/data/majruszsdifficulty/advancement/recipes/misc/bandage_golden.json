@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "majruszsdifficulty:bandage_golden"
+        "recipes": "majruszsdifficulty:bandage_golden"
       }
     }
   },

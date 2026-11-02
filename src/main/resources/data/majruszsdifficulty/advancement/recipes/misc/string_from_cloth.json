@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "majruszsdifficulty:string_from_cloth"
+        "recipes": "majruszsdifficulty:string_from_cloth"
       }
     }
   },

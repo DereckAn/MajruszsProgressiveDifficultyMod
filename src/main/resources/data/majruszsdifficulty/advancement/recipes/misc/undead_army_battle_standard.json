@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "majruszsdifficulty:undead_army_battle_standard"
+        "recipes": "majruszsdifficulty:undead_army_battle_standard"
       }
     }
   },
