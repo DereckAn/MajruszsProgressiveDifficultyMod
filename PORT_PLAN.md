@@ -9,11 +9,11 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [x] Step 2: Library port (2026-11-02)
 - [x] Step 3: Gameplay (first playable version) (2026-11-02, tested in-game by the user)
 - [x] Step 4: Custom mobs (2026-11-02, mobs and item visuals tested in-game by the user)
-- [ ] Step 5: Blood moon visuals
+- [x] Step 5: Blood moon visuals (2026-11-02, tested in-game by the user)
 - [ ] Step 6: Polish and publish
 - [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
-**Current step:** Step 5 (blood moon visuals)
+**Current step:** Step 6 (polish and publish) — only when the user says so
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
@@ -48,6 +48,9 @@ Library branch `26.3` in `~/Documents/GIT/MajruszLibrary`: compiles, 136 classes
 - Each mob renderer extracts its own render state that carries the entity's `Animations`; models read only that state (`walkAnimationPos/Speed`, `yRot/xRot`, `ageInTicks`). Giant uses vanilla's zombie model/armor layers ×5; Cursed Armor bakes vanilla's zombie armor meshes into `CursedArmorModel` (its model JSON now has `hat` under `head`, which 26.x HumanoidModel requires); Illusioner subclasses vanilla's renderer for the mod texture.
 - Item visuals as 26.x item-model types registered in `client/ItemModelExtensions`: `majruszsdifficulty:shard_distance` (range_dispatch) and `majruszsdifficulty:soul_color` (tint). The shard locator's scan cache now lives in client memory instead of the item's data.
 - Mod client mixins: `MixinShieldSpecialRenderer` (Soul Jar shield overlay), `MixinHumanoidModel` + `MixinFirstPersonHandsAndItemsRenderer` (scroll casting pose). The library's parked rendering hooks were removed.
+
+### Blood moon visuals (Step 5)
+- `MixinClientLevel` adds time-based environment attribute layers that tint `FOG_COLOR`, `SKY_COLOR` and `SKY_LIGHT_COLOR` (same ratios as 1.20.1). `MixinSkyRenderer` swaps the moon vertex buffer for red phase sprites (`textures/environment/celestial/blood_moon/*.png`, split from the old sheet; the vanilla celestials atlas picks them up) and tints the stars.
 
 ### Build notes (Step 1)
 - Both repos are now **single-module Fabric Loom projects** (`src/` = old `common/src` + `fabric/src`); Forge, NeoForge and the CurseForge/Modrinth upload tasks are gone. Branch `26.3` in both (the library branch is local only, no fork yet).
