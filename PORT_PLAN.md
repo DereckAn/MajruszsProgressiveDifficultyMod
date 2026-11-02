@@ -13,7 +13,7 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [ ] Step 6: Polish and publish
 - [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
-**Current step:** Step 3 (gameplay, first playable version)
+**Current step:** Step 3 (built and installed 2026-11-02; waiting for the user's first in-game test)
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
@@ -34,6 +34,14 @@ Library branch `26.3` in `~/Documents/GIT/MajruszLibrary`: compiles, 136 classes
   - `OnGuiOverlaysRegistered.Renderer` gets a `GuiGraphicsExtractor`; `OnRaidDefeated` has a `level`; `CustomParticle` takes a `TextureAtlasSprite` (pass `spriteSet.first()`).
   - `OnLootingLevelGet` exists but nothing fires it (looting is an enchantment now): the Enderium set's +1 looting needs a new hook.
 - **Behaviour changes in the library:** `VersionChecker` removed (it pointed at the abandoned 1.20.1 update feed); world data moved to `data/majruszsdifficulty/world_data.dat` (1.20.1 worlds not migrated); a fully shield-blocked hit now still fires `OnEntityPreDamaged`.
+
+### Gameplay port notes (Step 3)
+- Java compiles; data converted with a one-shot script (folder renames, ingredient/result/icon formats, `looting_enchant` → `enchanted_count_increase`, `random_chance_with_looting` → `random_chance_with_enchanted_bonus`, `match_tool` enchantment predicate, `loot_table` entry `name` → `value`, `scute` → `turtle_scute`). `forge:` item tags became vanilla `minecraft:` tool/armor tags (they also drive enchanting); `c:ingots`/`c:nuggets` kept.
+- New data: repair tags, `undead` + `burn_in_daylight` entity tags (Cerberus, Giant, Tank), 18 wither brewing recipes (`recipe/brewing/`), `assets/<ns>/items/*.json` for all 51 items (armor uses the vanilla `trim_material` select, resin trims added), equipment assets for Enderium/Tattered armor, new 16×16 spawn egg textures drawn by `eggs.py` (original pixel art in the old colors).
+- **Custom mobs:** Cerberus, Creeperling, Cursed Armor, Giant, Tank are registered but never spawn until Step 4 (`MajruszsDifficulty.isWithoutRenderer`: biome spawns commented out, removed from Undead Army waves, any other spawn cancelled). The Illusioner works now (vanilla renderer).
+- The library's `animations/` + `ResourceLoader` came back (mob attack timing runs on animation callbacks).
+- **Still TODO (Step 4):** shard locator distance item property, Soul Jar soul tint colors and shield overlay, scroll casting arm pose, custom mob models.
+- Test profile: Improved Mobs and Forge Config API Port moved to `~/Documents/curseforge/minecraft/Instances/test/mods-disabled/` (user plays this mod alone for now).
 
 ### Build notes (Step 1)
 - Both repos are now **single-module Fabric Loom projects** (`src/` = old `common/src` + `fabric/src`); Forge, NeoForge and the CurseForge/Modrinth upload tasks are gone. Branch `26.3` in both (the library branch is local only, no fork yet).

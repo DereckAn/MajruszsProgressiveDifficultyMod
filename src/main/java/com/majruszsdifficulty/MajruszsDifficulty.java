@@ -1,5 +1,7 @@
 package com.majruszsdifficulty;
 
+import net.minecraft.client.renderer.entity.IllusionerRenderer;
+import com.majruszlibrary.events.OnEntitySpawned;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import com.majruszlibrary.emitter.ParticleEmitter;
@@ -198,8 +200,23 @@ public class MajruszsDifficulty {
 	// Recipes
 	public static final RegistryObject< RecipeSerializer< ? > > SOUL_JAR_SHIELD_RECIPE = RECIPES.create( "soul_jar_shield", ()->SoulJarShieldRecipe.SERIALIZER );
 
+	/**
+	 * TODO(step 4): remove once their models/renderers are ported. Until then these mobs are registered but never spawn
+	 * (biome spawns skipped in Initializer, filtered out of Undead Army waves, any other spawn is cancelled).
+	 */
+	public static boolean isWithoutRenderer( EntityType< ? > type ) {
+		return type == CERBERUS_ENTITY.get()
+			|| type == CREEPERLING_ENTITY.get()
+			|| type == CURSED_ARMOR_ENTITY.get()
+			|| type == GIANT_ENTITY.get()
+			|| type == TANK_ENTITY.get();
+	}
+
 	static {
 		OnGameInitialized.listen( MajruszsDifficulty::addDefaultEmitters );
+
+		OnEntitySpawned.listen( OnEntitySpawned::cancelSpawn )
+			.addCondition( data->MajruszsDifficulty.isWithoutRenderer( data.entity.getType() ) );
 
 		HELPER.create( Custom.Advancements.class, advancements->{
 			advancements.register( HELPER.getLocation( "game_stage" ), GAME_STAGE_ADVANCEMENT );
@@ -257,7 +274,7 @@ public class MajruszsDifficulty {
 				renderers.register( CURSED_ARMOR_ENTITY.get(), NoopRenderer::new );
 				renderers.register( CREEPERLING_ENTITY.get(), NoopRenderer::new );
 				renderers.register( GIANT_ENTITY.get(), NoopRenderer::new );
-				renderers.register( ILLUSIONER_ENTITY.get(), NoopRenderer::new );
+				renderers.register( ILLUSIONER_ENTITY.get(), IllusionerRenderer::new ); // vanilla renderer, the mod Illusioner extends the vanilla one
 				renderers.register( TANK_ENTITY.get(), NoopRenderer::new );
 			} );
 		}

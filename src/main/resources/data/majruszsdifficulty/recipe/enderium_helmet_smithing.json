@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "base": "minecraft:netherite_helmet",
+  "addition": "majruszsdifficulty:enderium_ingot",
+  "result": {
+    "id": "majruszsdifficulty:enderium_helmet"
+  },
+  "template": "majruszsdifficulty:enderium_upgrade_smithing_template"
+}

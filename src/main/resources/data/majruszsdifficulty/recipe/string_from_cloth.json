@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "string",
+  "ingredients": [
+    "majruszsdifficulty:cloth"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:string"
+  }
+}

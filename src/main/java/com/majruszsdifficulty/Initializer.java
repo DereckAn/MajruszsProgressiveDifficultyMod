@@ -28,9 +28,10 @@ public class Initializer implements ModInitializer {
 		BiomeModifications.addFeature( IS_END, GenerationStep.Decoration.UNDERGROUND_ORES, MajruszsDifficulty.FRAGILE_END_STONE_LARGE_PLACED_FEATURE );
 		BiomeModifications.addFeature( IS_END, GenerationStep.Decoration.UNDERGROUND_ORES, MajruszsDifficulty.INFESTED_END_STONE_PLACED_FEATURE );
 
-		BiomeModifications.addSpawn( IS_OVERWORLD, MobCategory.MONSTER, MajruszsDifficulty.CURSED_ARMOR_ENTITY.get(), 30, 1, 3 );
 		BiomeModifications.addSpawn( IS_OVERWORLD, MobCategory.MONSTER, MajruszsDifficulty.ILLUSIONER_ENTITY.get(), 8, 1, 1 );
-		BiomeModifications.addSpawn( IS_OVERWORLD, MobCategory.MONSTER, MajruszsDifficulty.TANK_ENTITY.get(), 3, 1, 1 );
-		BiomeModifications.addSpawn( IS_NETHER, MobCategory.MONSTER, MajruszsDifficulty.CERBERUS_ENTITY.get(), 1, 1, 1 );
+		// TODO(step 4): re-enable with the custom mob renderers
+		// BiomeModifications.addSpawn( IS_OVERWORLD, MobCategory.MONSTER, MajruszsDifficulty.CURSED_ARMOR_ENTITY.get(), 30, 1, 3 );
+		// BiomeModifications.addSpawn( IS_OVERWORLD, MobCategory.MONSTER, MajruszsDifficulty.TANK_ENTITY.get(), 3, 1, 1 );
+		// BiomeModifications.addSpawn( IS_NETHER, MobCategory.MONSTER, MajruszsDifficulty.CERBERUS_ENTITY.get(), 1, 1, 1 );
 	}
 }

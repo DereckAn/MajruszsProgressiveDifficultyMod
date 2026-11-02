@@ -1,5 +1,6 @@
 package com.majruszsdifficulty.undeadarmy.listeners;
 
+import com.majruszsdifficulty.MajruszsDifficulty;
 import com.majruszlibrary.entity.EntityHelper;
 import com.majruszlibrary.item.ItemHelper;
 import com.majruszlibrary.item.LootHelper;
@@ -48,12 +49,15 @@ public class MobSpawner {
 		float sizeMultiplier = 1.0f + ( data.undeadArmy.participants.size() - 1 ) * UndeadArmyConfig.EXTRA_PLAYER_RATIO;
 		UndeadArmyConfig.WaveDef waveDef = UndeadArmyConfig.WAVE_DEFS.get( data.undeadArmy.currentWave );
 		waveDef.mobDefs.forEach( mobDef->{
+			if( MajruszsDifficulty.isWithoutRenderer( mobDef.type.get() ) ) {
+				return; // TODO(step 4): custom mobs are not rendered yet
+			}
 			int count = Random.round( mobDef.count * sizeMultiplier );
 			for( int idx = 0; idx < count; ++idx ) {
 				data.undeadArmy.mobsLeft.add( new UndeadArmy.MobInfo( mobDef, MobSpawner.getRandomSpawnPosition( data.undeadArmy ), false ) );
 			}
 		} );
-		if( waveDef.bossDef != null ) {
+		if( waveDef.bossDef != null && !MajruszsDifficulty.isWithoutRenderer( waveDef.bossDef.type.get() ) ) {
 			data.undeadArmy.mobsLeft.add( new UndeadArmy.MobInfo( waveDef.bossDef, MobSpawner.getRandomSpawnPosition( data.undeadArmy ), true ) );
 		}
 		data.undeadArmy.phase.healthTotal = 0;
