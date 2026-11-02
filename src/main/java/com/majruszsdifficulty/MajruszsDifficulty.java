@@ -1,7 +1,5 @@
 package com.majruszsdifficulty;
 
-import net.minecraft.client.renderer.entity.IllusionerRenderer;
-import com.majruszlibrary.events.OnEntitySpawned;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import com.majruszlibrary.emitter.ParticleEmitter;
@@ -40,7 +38,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnPlacementTypes;
-import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import com.mojang.serialization.MapCodec;
@@ -200,23 +197,8 @@ public class MajruszsDifficulty {
 	// Recipes
 	public static final RegistryObject< RecipeSerializer< ? > > SOUL_JAR_SHIELD_RECIPE = RECIPES.create( "soul_jar_shield", ()->SoulJarShieldRecipe.SERIALIZER );
 
-	/**
-	 * TODO(step 4): remove once their models/renderers are ported. Until then these mobs are registered but never spawn
-	 * (biome spawns skipped in Initializer, filtered out of Undead Army waves, any other spawn is cancelled).
-	 */
-	public static boolean isWithoutRenderer( EntityType< ? > type ) {
-		return type == CERBERUS_ENTITY.get()
-			|| type == CREEPERLING_ENTITY.get()
-			|| type == CURSED_ARMOR_ENTITY.get()
-			|| type == GIANT_ENTITY.get()
-			|| type == TANK_ENTITY.get();
-	}
-
 	static {
 		OnGameInitialized.listen( MajruszsDifficulty::addDefaultEmitters );
-
-		OnEntitySpawned.listen( OnEntitySpawned::cancelSpawn )
-			.addCondition( data->MajruszsDifficulty.isWithoutRenderer( data.entity.getType() ) );
 
 		HELPER.create( Custom.Advancements.class, advancements->{
 			advancements.register( HELPER.getLocation( "game_stage" ), GAME_STAGE_ADVANCEMENT );
@@ -263,19 +245,24 @@ public class MajruszsDifficulty {
 	@Environment( EnvType.CLIENT )
 	public static class Client {
 		static {
-			// TODO(step 4): custom model layers + renderers; NoopRenderer keeps the client from crashing until then
-			// TODO(step 4): ENDERIUM_SHARD_LOCATOR shard_distance item property (26.x: item model range_dispatch)
+			HELPER.create( Custom.ModelLayers.class, modelLayers->{
+				modelLayers.register( CerberusRenderer.LAYER, ()->CerberusModel.MODEL.get().toLayerDefinition() );
+				modelLayers.register( CursedArmorRenderer.LAYER, ()->CursedArmorModel.MODEL.get().toLayerDefinition() );
+				modelLayers.register( CreeperlingRenderer.LAYER, ()->CreeperlingModel.MODEL.get().toLayerDefinition() );
+				modelLayers.register( TankRenderer.LAYER, ()->TankModel.MODEL.get().toLayerDefinition() );
+			} );
+
 			HELPER.create( Custom.Particles.class, particles->{
 				particles.register( MajruszsDifficulty.BLOOD_PARTICLE.get(), BloodParticle.Factory::new );
 			} );
 
 			HELPER.create( Custom.Renderers.class, renderers->{
-				renderers.register( CERBERUS_ENTITY.get(), NoopRenderer::new );
-				renderers.register( CURSED_ARMOR_ENTITY.get(), NoopRenderer::new );
-				renderers.register( CREEPERLING_ENTITY.get(), NoopRenderer::new );
-				renderers.register( GIANT_ENTITY.get(), NoopRenderer::new );
-				renderers.register( ILLUSIONER_ENTITY.get(), IllusionerRenderer::new ); // vanilla renderer, the mod Illusioner extends the vanilla one
-				renderers.register( TANK_ENTITY.get(), NoopRenderer::new );
+				renderers.register( CERBERUS_ENTITY.get(), CerberusRenderer::new );
+				renderers.register( CURSED_ARMOR_ENTITY.get(), CursedArmorRenderer::new );
+				renderers.register( CREEPERLING_ENTITY.get(), CreeperlingRenderer::new );
+				renderers.register( GIANT_ENTITY.get(), GiantRenderer::new );
+				renderers.register( ILLUSIONER_ENTITY.get(), IllusionerRenderer::new );
+				renderers.register( TANK_ENTITY.get(), TankRenderer::new );
 			} );
 		}
 	}

@@ -2,21 +2,24 @@ package com.majruszsdifficulty.entity;
 
 import com.majruszlibrary.animations.ModelDef;
 import com.majruszlibrary.animations.ModelParts;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import com.majruszlibrary.modhelper.Resource;
 import com.majruszsdifficulty.MajruszsDifficulty;
-import net.minecraft.client.model.HierarchicalModel;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.entity.state.CreeperRenderState;
 import net.minecraft.util.Mth;
 
 @Environment( EnvType.CLIENT )
-public class CreeperlingModel< Type extends Creeperling > extends HierarchicalModel< Type > {
+public class CreeperlingModel extends EntityModel< CreeperRenderState > {
 	public static Resource< ModelDef > MODEL = MajruszsDifficulty.HELPER.loadClient( "creeperling_model", ModelDef.class );
 	public final ModelParts modelParts;
 	public final ModelPart head, leftBackFoot, leftFrontFoot, rightBackFoot, rightFrontFoot;
 
 	public CreeperlingModel( ModelPart modelPart ) {
+		super( modelPart );
+
 		this.modelParts = new ModelParts( modelPart, MODEL.get() );
 		this.head = this.modelParts.get( "head" );
 		this.leftBackFoot = this.modelParts.get( "leftBackFoot" );
@@ -26,23 +29,17 @@ public class CreeperlingModel< Type extends Creeperling > extends HierarchicalMo
 	}
 
 	@Override
-	public void setupAnim( Type creeperling, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch ) {
+	public void setupAnim( CreeperRenderState state ) {
 		this.modelParts.reset();
 
-		float limbFactor1 = 2.5f * limbSwing * 0.6662f, limbFactor2 = 1.4f * limbSwingAmount;
+		float limbFactor1 = 2.5f * state.walkAnimationPos * 0.6662f, limbFactor2 = 1.4f * state.walkAnimationSpeed;
 
-		this.head.yRot += Math.toRadians( netHeadYaw );
-		this.head.xRot += Math.toRadians( headPitch );
+		this.head.yRot += Math.toRadians( state.yRot );
+		this.head.xRot += Math.toRadians( state.xRot );
 
 		this.leftBackFoot.xRot += Mth.cos( limbFactor1 ) * limbFactor2;
 		this.rightBackFoot.xRot += Mth.cos( limbFactor1 + ( float )Math.PI ) * limbFactor2;
 		this.rightFrontFoot.xRot += Mth.cos( limbFactor1 + ( float )Math.PI ) * limbFactor2;
 		this.leftFrontFoot.xRot += Mth.cos( limbFactor1 ) * limbFactor2;
 	}
-
-	@Override
-	public ModelPart root() {
-		return this.modelParts.getRoot();
-	}
 }
-

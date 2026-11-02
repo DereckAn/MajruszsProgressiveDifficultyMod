@@ -2,15 +2,15 @@ package com.majruszsdifficulty.entity;
 
 import com.majruszlibrary.animations.ModelDef;
 import com.majruszlibrary.animations.ModelParts;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import com.majruszlibrary.modhelper.Resource;
 import com.majruszsdifficulty.MajruszsDifficulty;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 
 @Environment( EnvType.CLIENT )
-public class CursedArmorModel< Type extends CursedArmor > extends HumanoidModel< Type > {
+public class CursedArmorModel extends HumanoidModel< CursedArmorRenderer.State > {
 	public static Resource< ModelDef > MODEL = MajruszsDifficulty.HELPER.loadClient( "cursed_armor_model", ModelDef.class );
 	public final ModelParts modelParts;
 
@@ -21,12 +21,13 @@ public class CursedArmorModel< Type extends CursedArmor > extends HumanoidModel<
 	}
 
 	@Override
-	public void setupAnim( Type cursedArmor, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch ) {
+	public void setupAnim( CursedArmorRenderer.State state ) {
 		this.modelParts.reset();
 
-		super.setupAnim( cursedArmor, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch );
+		super.setupAnim( state );
 
-		cursedArmor.getAnimations().forEach( animation->animation.apply( this.modelParts, ageInTicks ) );
+		if( state.animations != null ) {
+			state.animations.forEach( animation->animation.apply( this.modelParts, state.ageInTicks ) );
+		}
 	}
 }
-
