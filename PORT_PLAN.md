@@ -11,11 +11,13 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [ ] Step 4: Custom mobs
 - [ ] Step 5: Blood moon visuals
 - [ ] Step 6: Polish and publish
+- [ ] Step 7: Merge with Improved Mobs into one mod (plan it when Step 6 is done; use the overlap table below)
 
 **Current step:** Step 1 (waiting for the user to read the Step 0 summary and decide the Improved Mobs overlaps)
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
+- 2026-11-02: user will play this mod **alone** (without Improved Mobs) for now, so keep all config defaults as they are. Merging both mods' logic into one mod is a new Step 7, after Step 6.
 
 ### Known problems
 _(record open issues here)_
