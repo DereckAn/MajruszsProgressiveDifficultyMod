@@ -19,7 +19,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.List;
 
 public class MobsSpawnStronger {
-	private static boolean IS_ENABLED = true;
+	private static boolean IS_ENABLED = false; // Step 7: Improved Mobs scales mob stats instead
 	private static final AttributeHandler HEALTH = new AttributeHandler( "progressive_difficulty_health_bonus", ()->Attributes.MAX_HEALTH, AttributeModifier.Operation.ADD_MULTIPLIED_BASE );
 	private static final AttributeHandler DAMAGE = new AttributeHandler( "progressive_difficulty_damage_bonus", ()->Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADD_MULTIPLIED_BASE );
 	private static GameStageValue< Float > HEALTH_BONUS = GameStageValue.of(

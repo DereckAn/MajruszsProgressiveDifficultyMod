@@ -22,7 +22,8 @@ public class UndeadArmyConfig {
 	public static float HIGHLIGHT_DELAY = 300.0f;
 	public static float EXTRA_PLAYER_RATIO = 0.5f;
 	public static int AREA_RADIUS = 70;
-	public static int KILL_REQUIREMENT = 100;
+	public static int KILL_REQUIREMENT = 0; // Step 7: 0 = off, armies come from Improved Mobs difficulty milestones
+	public static int DIFFICULTY_INTERVAL = 10;
 	public static int KILL_REQUIREMENT_FIRST = 25;
 	public static int KILL_REQUIREMENT_WARNING = 3;
 	public static List< WaveDef > WAVE_DEFS = List.of(
@@ -115,6 +116,7 @@ public class UndeadArmyConfig {
 			.define( "extra_size_ratio_per_player", Reader.number(), ()->EXTRA_PLAYER_RATIO, v->EXTRA_PLAYER_RATIO = Range.of( 0.0f, 1.0f ).clamp( v ) )
 			.define( "area_radius", Reader.integer(), ()->AREA_RADIUS, v->AREA_RADIUS = Range.of( 35, 140 ).clamp( v ) )
 			.define( "kill_requirement", Reader.integer(), ()->KILL_REQUIREMENT, v->KILL_REQUIREMENT = Range.of( 0, 1000 ).clamp( v ) )
+			.define( "difficulty_interval", Reader.integer(), ()->DIFFICULTY_INTERVAL, v->DIFFICULTY_INTERVAL = Range.of( 0, 500 ).clamp( v ) )
 			.define( "kill_requirement_first", Reader.integer(), ()->KILL_REQUIREMENT_FIRST, v->KILL_REQUIREMENT_FIRST = Range.of( 1, 1000 ).clamp( v ) )
 			.define( "kill_requirement_warning", Reader.integer(), ()->KILL_REQUIREMENT_WARNING, v->KILL_REQUIREMENT_WARNING = Range.of( 1, 1000 ).clamp( v ) )
 			.define( "waves", Reader.list( Reader.custom( WaveDef::new ) ), ()->WAVE_DEFS, v->WAVE_DEFS = v );
