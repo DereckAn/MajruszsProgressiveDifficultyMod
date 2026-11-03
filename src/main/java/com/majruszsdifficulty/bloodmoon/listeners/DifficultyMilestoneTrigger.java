@@ -13,7 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 
 // Step 7: a blood moon starts on the first night after the highest online player's Improved Mobs difficulty passes a multiple of `difficulty_interval`.
 public class DifficultyMilestoneTrigger {
-	private static int MILESTONE = -1;
+	private static int MILESTONE = 0;
 
 	static {
 		OnServerTicked.listen( DifficultyMilestoneTrigger::check )
@@ -30,11 +30,8 @@ public class DifficultyMilestoneTrigger {
 			.mapToInt( player->( int )( DifficultyFetcher.getDifficulty( ( ServerLevel )player.level(), player.position() ) / BloodMoonConfig.DIFFICULTY_INTERVAL ) )
 			.max()
 			.orElse( -1 );
-		if( milestone < 0 || milestone <= MILESTONE ) {
-			return;
-		}
-		if( MILESTONE < 0 || BloodMoonHelper.start() || BloodMoonHelper.isActive() ) {
-			MILESTONE = milestone; // first check on an old world only records the milestone; random-chance moon on the same night counts too
+		if( milestone > MILESTONE && ( BloodMoonHelper.start() || BloodMoonHelper.isActive() ) ) {
+			MILESTONE = milestone; // skipped milestones give one blood moon; a random-chance moon on the same night counts too
 			MajruszsDifficulty.WORLD_DATA.setDirty();
 		}
 	}

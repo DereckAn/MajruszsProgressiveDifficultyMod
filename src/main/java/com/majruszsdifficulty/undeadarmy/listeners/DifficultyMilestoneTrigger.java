@@ -27,16 +27,14 @@ public class DifficultyMilestoneTrigger {
 		for( ServerPlayer player : Side.getServer().getPlayerList().getPlayers() ) {
 			int milestone = ( int )( DifficultyFetcher.getDifficulty( ( ServerLevel )player.level(), player.position() ) / UndeadArmyConfig.DIFFICULTY_INTERVAL );
 			Serializables.modify( new Milestone(), EntityHelper.getOrCreateExtraTag( player ), stored->{
-				if( stored.value < 0 ) {
-					stored.value = milestone; // first check (new player or old world): don't spawn for milestones already passed
-				} else if( milestone > stored.value && UndeadArmyHelper.tryToSpawn( player ) ) {
-					stored.value = milestone; // ponytail: no spawn (underground, other dimension, army nearby) = retried every 5 s until it works
+				if( milestone > stored.value && UndeadArmyHelper.tryToSpawn( player ) ) {
+					stored.value = milestone; // skipped milestones give one army, not one each. ponytail: no spawn (underground, other dimension, army nearby) = retried every 5 s until it works
 				}
 			} );
 		}
 	}
 
 	public static class Milestone {
-		public int value = -1;
+		public int value = 0;
 	}
 }
