@@ -1,0 +1,150 @@
+package io.github.flemmli97.improvedmobs.common.commands;
+
+import net.minecraft.server.players.NameAndId;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import io.github.flemmli97.improvedmobs.common.config.Config;
+import io.github.flemmli97.improvedmobs.common.difficulty.DifficultyData;
+import io.github.flemmli97.improvedmobs.common.difficulty.PlayerDifficulty;
+import io.github.flemmli97.improvedmobs.common.network.PacketHandler;
+import io.github.flemmli97.improvedmobs.common.registry.ImprovedMobsAttachments;
+import io.github.flemmli97.improvedmobs.platform.CrossPlatformStuff;
+import io.github.flemmli97.tenshilib.common.utils.math.parser.VariableMap;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+
+import java.util.Collection;
+
+// TODO: make command feedback translatable (test translation lib a bit more before)
+public class ImprovedMobsCommand {
+
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("improvedmobs")
+                .executes(ImprovedMobsCommand::getDifficulty)
+                .then(Commands.literal("difficulty").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .then(Commands.literal("player").then(Commands.argument("players", GameProfileArgument.gameProfile())
+                                .then(Commands.literal("set").then(Commands.argument("val", DoubleArgumentType.doubleArg()).executes(ImprovedMobsCommand::setDifficultyPlayer)))
+                                .then(Commands.literal("add").then(Commands.argument("val", DoubleArgumentType.doubleArg()).executes(ImprovedMobsCommand::addDifficultyPlayer)))))
+                        .then(Commands.literal("set").then(Commands.argument("val", DoubleArgumentType.doubleArg()).executes(ImprovedMobsCommand::setDifficulty)))
+                        .then(Commands.literal("add").then(Commands.argument("val", DoubleArgumentType.doubleArg()).executes(ImprovedMobsCommand::addDifficulty)))
+                        .then(Commands.literal("pause")
+                                .then(Commands.literal("player").then(Commands.argument("players", GameProfileArgument.gameProfile()).executes(src -> ImprovedMobsCommand.pauseDifficulty(src, GameProfileArgument.getGameProfiles(src, "players"), true))))
+                                .executes(src -> ImprovedMobsCommand.pauseDifficulty(src, null, true)))
+                        .then(Commands.literal("unpause")
+                                .then(Commands.literal("player").then(Commands.argument("players", GameProfileArgument.gameProfile()).executes(src -> ImprovedMobsCommand.pauseDifficulty(src, GameProfileArgument.getGameProfiles(src, "players"), false))))
+                                .executes(src -> ImprovedMobsCommand.pauseDifficulty(src, null, false)))
+                        .then(Commands.literal("simulate")
+                                .then(Commands.argument("steps", IntegerArgumentType.integer(1))
+                                        .then(Commands.literal("player").then(Commands.argument("players", GameProfileArgument.gameProfile()).executes(src -> ImprovedMobsCommand.simulateDifficulty(src, GameProfileArgument.getGameProfiles(src, "players"), IntegerArgumentType.getInteger(src, "steps")))))
+                                        .executes(src -> ImprovedMobsCommand.simulateDifficulty(src, null, IntegerArgumentType.getInteger(src, "steps")))))
+                ));
+    }
+
+    private static int setDifficulty(CommandContext<CommandSourceStack> src) {
+        DifficultyData data = DifficultyData.get(src.getSource().getServer());
+        data.setDifficulty(DoubleArgumentType.getDouble(src, "val"), src.getSource().getServer());
+        src.getSource().sendSuccess(() -> Component.literal("Difficulty set to " + data.getDifficulty()).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), true);
+        return 1;
+    }
+
+    private static int addDifficulty(CommandContext<CommandSourceStack> src) {
+        DifficultyData data = DifficultyData.get(src.getSource().getServer());
+        data.addDifficulty(DoubleArgumentType.getDouble(src, "val"), src.getSource().getServer());
+        src.getSource().sendSuccess(() -> Component.literal("Difficulty set to " + data.getDifficulty()).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), true);
+        return 1;
+    }
+
+    private static int setDifficultyPlayer(CommandContext<CommandSourceStack> src) throws CommandSyntaxException {
+        Collection<NameAndId> profs = GameProfileArgument.getGameProfiles(src, "players");
+        MinecraftServer server = src.getSource().getServer();
+        for (NameAndId prof : profs) {
+            ServerPlayer player = server.getPlayerList().getPlayer(prof.id());
+            PlayerDifficulty data = ImprovedMobsAttachments.PLAYER_DIFFICULTY.get().get(player);
+            data.setDifficultyLevel(DoubleArgumentType.getDouble(src, "val"));
+            CrossPlatformStuff.INSTANCE.sendClientboundPacket(PacketHandler.createDifficultyPacket(DifficultyData.get(server), player), player);
+            src.getSource().sendSuccess(() -> Component.literal("Difficulty for " + prof.name() + " set to " + data.getDifficultyLevel()).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), true);
+        }
+        return profs.size();
+    }
+
+    private static int addDifficultyPlayer(CommandContext<CommandSourceStack> src) throws CommandSyntaxException {
+        Collection<NameAndId> profs = GameProfileArgument.getGameProfiles(src, "players");
+        MinecraftServer server = src.getSource().getServer();
+        for (NameAndId prof : profs) {
+            ServerPlayer player = server.getPlayerList().getPlayer(prof.id());
+            PlayerDifficulty data = ImprovedMobsAttachments.PLAYER_DIFFICULTY.get().get(player);
+            data.setDifficultyLevel(data.getDifficultyLevel() + DoubleArgumentType.getDouble(src, "val"));
+            CrossPlatformStuff.INSTANCE.sendClientboundPacket(PacketHandler.createDifficultyPacket(DifficultyData.get(server), player), player);
+            src.getSource().sendSuccess(() -> Component.literal("Difficulty for " + prof.name() + " set to " + data.getDifficultyLevel()).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), true);
+        }
+        return profs.size();
+    }
+
+    private static int getDifficulty(CommandContext<CommandSourceStack> src) throws CommandSyntaxException {
+        double diff;
+        if (Config.CommonConfig.difficultyType == Config.DifficultyType.GLOBAL)
+            diff = DifficultyData.get(src.getSource().getServer())
+                    .getDifficulty();
+        else {
+            ServerPlayer player = src.getSource().getPlayerOrException();
+            diff = ImprovedMobsAttachments.PLAYER_DIFFICULTY.get().get(player).getDifficultyLevel();
+        }
+        src.getSource().sendSuccess(() -> Component.literal("Difficulty: " + diff).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), true);
+        return 1;
+    }
+
+    private static int pauseDifficulty(CommandContext<CommandSourceStack> src, Collection<NameAndId> profs, boolean pause) throws CommandSyntaxException {
+        if (profs != null) {
+            MinecraftServer server = src.getSource().getServer();
+            for (NameAndId prof : profs) {
+                ServerPlayer player = server.getPlayerList().getPlayer(prof.id());
+                PlayerDifficulty data = ImprovedMobsAttachments.PLAYER_DIFFICULTY.get().get(player);
+                data.setPaused(pause);
+            }
+            src.getSource().sendSuccess(() -> Component.literal("Difficulty " + (pause ? "paused" : "unpaused") + " for given players").setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), true);
+            return profs.size();
+        }
+        DifficultyData data = DifficultyData.get(src.getSource().getServer());
+        data.setPaused(pause);
+        src.getSource().sendSuccess(() -> Component.literal("Difficulty " + (pause ? "paused" : "unpaused")).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), true);
+        return 1;
+    }
+
+    private static int simulateDifficulty(CommandContext<CommandSourceStack> src, Collection<NameAndId> profs, int steps) {
+        VariableMap vars = new VariableMap();
+        if (profs != null) {
+            MinecraftServer server = src.getSource().getServer();
+            for (NameAndId prof : profs) {
+                ServerPlayer player = server.getPlayerList().getPlayer(prof.id());
+                PlayerDifficulty data = ImprovedMobsAttachments.PLAYER_DIFFICULTY.get().get(player);
+                Config.apply(vars, player, 0);
+                int i = steps;
+                while (i > 0) {
+                    data.increaseCurrent(vars);
+                    i--;
+                }
+                CrossPlatformStuff.INSTANCE.sendClientboundPacket(PacketHandler.createDifficultyPacket(DifficultyData.get(server), player), player);
+            }
+            src.getSource().sendSuccess(() -> Component.literal(String.format("Simulated %s difficulty steps for given players", steps)).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), true);
+            return profs.size();
+        }
+        DifficultyData data = DifficultyData.get(src.getSource().getServer());
+        int i = steps;
+        vars.clear();
+        while (i > 0) {
+            data.increaseCurrent(vars);
+            i--;
+        }
+        src.getSource().sendSuccess(() -> Component.literal(String.format("Simulated %s difficulty steps globally. Now at %s", steps, data.getDifficulty())).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), true);
+        return 1;
+    }
+}

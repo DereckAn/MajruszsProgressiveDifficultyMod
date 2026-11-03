@@ -11,13 +11,14 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [x] Step 4: Custom mobs (2026-11-02, mobs and item visuals tested in-game by the user)
 - [x] Step 5: Blood moon visuals (2026-11-02, tested in-game by the user)
 - [x] Step 6: Polish and publish (2026-11-02: release v26.3-1.9.10, library fork DereckAn/MajruszLibrary)
-- [ ] Step 7: Merge with Improved Mobs into one mod (ideas in "Step 7 ideas" below; also use the overlap table)
+- [ ] Step 7: Merge with Improved Mobs into one mod (plan in "Step 7 plan"). 7a one jar: done 2026-11-03, tested in-game by the user
 
-**Current step:** Step 7 (merge with Improved Mobs) — not planned yet. Start by reading "Step 7 ideas", then survey both mods and propose a plan to the user before writing code.
+**Current step:** Step 7b (difficulty milestones). See "Step 7 plan".
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
 - 2026-11-02: Step 7 ideas recorded (see "Step 7 ideas"); the user will decide the details when planning.
+- 2026-11-02 (Step 7): **full code merge** of Improved Mobs into this repo (user's choice, aware it's ARR: keep the merged jar private until Flemmli97 answers the issue). Undead Army: difficulty milestones **replace** the kill-count trigger. Blood moon: milestones **plus** the random nightly chance. With Improved Mobs active, this mod's `mobs_spawn_stronger` is off. A config screen lets the user switch these (difficulty source: Improved Mobs / Majrusz / both; army and blood moon triggers).
 - 2026-11-02: user will play this mod **alone** (without Improved Mobs) for now, so keep all config defaults as they are. Merging both mods' logic into one mod is a new Step 7, after Step 6.
 
 ### Known problems
@@ -143,6 +144,15 @@ It can be done, but it's the biggest of the user's mods so far.
 **Good news:** both the mod and the library are **MIT licensed**, so the port can be published and shared. Keep the MIT license and credit Majrusz.
 
 **Overlap with Improved Mobs:** both mods make mobs stronger over time, give mobs gear and raise their stats. Running both stacks the effects and may conflict. Step 0 must list the overlaps so the user can decide what to turn off in which config.
+
+## Step 7 plan (2026-11-02)
+
+Sub-steps; commit and test in-game after each.
+- **7a. One jar.** Copy Improved Mobs (`common` + `fabric` sources, resources, generated resources, mixins, access widener) into this repo under its own package `io.github.flemmli97.improvedmobs`; keep its `improvedmobs` namespace, world data and TOML config. Our `fabric.mod.json` gets its entrypoints and mixins and `"provides": ["improvedmobs"]` (Forge Config API Port looks the mod id up). TenshiLib and Forge Config API Port (MPL-2.0) are bundled jar-in-jar. Test: both mods' features work from one jar, no other mods besides Fabric API.
+- **7b. Milestones.** Read `DifficultyFetcher.getDifficulty`. Every 10 levels → Undead Army at a player (replaces the kill trigger); every 20 → blood moon on the next night (random chance stays). `mobs_spawn_stronger` follows the difficulty source setting.
+- **7c. Tiers.** Base / Nether visited / End visited + Expert or Master / tier 3 + difficulty > 300: extra elite mobs per wave and in blood moons, more count, more health and damage.
+- **7d. New elites.** "Giant skeleton" as a skeleton with the `minecraft:scale` attribute; Mutant Monsters mobs spawned by registry id only when that mod is installed (no code copied, it's AGPL).
+- **7e. Config screen.** In-game screen for the merged settings (check whether Mod Menu has a 26.3 build; otherwise a command or keybind opens it).
 
 ## Step 7 ideas (from the user, 2026-11-02, not planned or implemented yet)
 

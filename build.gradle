@@ -8,7 +8,12 @@ group = 'com.majruszsdifficulty'
 base.archivesName = "${mod_archives_name}-fabric"
 
 repositories {
-    mavenLocal() // the trimmed Majrusz Library: `./gradlew publishToMavenLocal` in ~/Documents/GIT/MajruszLibrary
+    mavenLocal() // trimmed Majrusz Library + TenshiLib: `./gradlew publishToMavenLocal` in each repo
+    maven { url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven/' } // Forge Config API Port (Improved Mobs configs)
+}
+
+loom {
+    accessWidenerPath = file('src/main/resources/improvedmobs.accesswidener')
 }
 
 dependencies {
@@ -17,6 +22,11 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
     implementation "com.majruszlibrary:majrusz-library:${majruszlibrary_version}"
     include "com.majruszlibrary:majrusz-library:${majruszlibrary_version}" // jar-in-jar: players install one mod
+    // Improved Mobs (merged into this mod, Step 7)
+    implementation "io.github.flemmli97:tenshilib:${tenshilib_version}-fabric"
+    include "io.github.flemmli97:tenshilib:${tenshilib_version}-fabric"
+    implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api}"
+    include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api}"
 }
 
 processResources {

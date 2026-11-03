@@ -17,18 +17,32 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.${mod_id}.Initializer"
+      "com.${mod_id}.Initializer",
+      "io.github.flemmli97.improvedmobs.fabric.ImprovedMobsFabric"
+    ],
+    "client": [
+      "io.github.flemmli97.improvedmobs.fabric.client.ImprovedMobsFabricClient"
     ]
   },
+  "provides": [
+    "improvedmobs"
+  ],
+  "accessWidener": "improvedmobs.accesswidener",
   "mixins": [
-    "${mod_id}-common.mixins.json"
+    "${mod_id}-common.mixins.json",
+    "improvedmobs.mixins.json",
+    "improvedmobs.fabric.mixins.json"
   ],
   "depends": {
     "fabric-api": "*",
     "minecraft": "${fabric_minecraft_version_range}",
-    "majruszlibrary": "${fabric_majruszlibrary_version_range}"
+    "majruszlibrary": "${fabric_majruszlibrary_version_range}",
+    "tenshilib": "*",
+    "forgeconfigapiport": "*"
   },
+
   "contributors": [
+    "Flemmli97 (Improved Mobs, merged in)",
     "DereckAn (unofficial 26.3 port)"
   ]
 }

@@ -1,0 +1,33 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.flemmli97.improvedmobs.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "pathfinding.FlyNodeMixin",
+    "pathfinding.NodeEvaluatorMixin",
+    "pathfinding.PathFindingContextMixin",
+    "pathfinding.PathNavigationMixin",
+    "pathfinding.SwimNodeEvaluatorMixin",
+    "pathfinding.WalkNodeMixin",
+    "ClipContextMixin",
+    "EntityMixin",
+    "EntitySensingMixin",
+    "EntityTypeMixin",
+    "LivingEntityMixin",
+    "LocalMobCapMixin",
+    "MobEntityMixin",
+    "MobMixin",
+    "NearestTargetGoalMixin",
+    "PotionEntityMixin",
+    "ServerChunkCacheMixin",
+    "SpawnStateMixin",
+    "TNTEntityMixin",
+    "TargetGoalAccessor",
+    "TargetGoalMixin",
+    "TargetingConditionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

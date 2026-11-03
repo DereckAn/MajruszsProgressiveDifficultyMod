@@ -1,0 +1,25 @@
+package io.github.flemmli97.improvedmobs.fabric.mixin;
+
+import io.github.flemmli97.improvedmobs.common.events.EventCalls;
+import net.minecraft.world.entity.projectile.hurtingprojectile.DragonFireball;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEgg;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownExperienceBottle;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.AbstractThrownPotion;
+import net.minecraft.world.phys.HitResult;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(value = {Projectile.class, ThrownEgg.class, AbstractThrownPotion.class, ThrownExperienceBottle.class, DragonFireball.class, ThrownEnderpearl.class})
+public abstract class ProjectileMixin {
+
+    @Inject(method = "onHit", at = @At(value = "HEAD"), cancellable = true)
+    private void collision(HitResult hitResult, CallbackInfo info) {
+        if (EventCalls.projectileImpact((Projectile) (Object) this, hitResult)) {
+            info.cancel();
+        }
+    }
+}
