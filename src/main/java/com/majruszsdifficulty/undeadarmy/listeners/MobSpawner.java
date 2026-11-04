@@ -23,7 +23,10 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 
+import com.majruszsdifficulty.tiers.TierConfig;
+
 import java.util.Arrays;
+import java.util.stream.Stream;
 import java.util.EnumSet;
 
 public class MobSpawner {
@@ -46,9 +49,10 @@ public class MobSpawner {
 	}
 
 	private static void generateMobList( OnUndeadArmyStateChanged data ) {
-		float sizeMultiplier = 1.0f + ( data.undeadArmy.participants.size() - 1 ) * UndeadArmyConfig.EXTRA_PLAYER_RATIO;
+		TierConfig.TierDef tier = TierConfig.get( data.undeadArmy.getLevel(), Vec3.atCenterOf( data.undeadArmy.position ) );
+		float sizeMultiplier = ( 1.0f + ( data.undeadArmy.participants.size() - 1 ) * UndeadArmyConfig.EXTRA_PLAYER_RATIO ) * tier.armySizeMultiplier;
 		UndeadArmyConfig.WaveDef waveDef = UndeadArmyConfig.WAVE_DEFS.get( data.undeadArmy.currentWave );
-		waveDef.mobDefs.forEach( mobDef->{
+		Stream.concat( waveDef.mobDefs.stream(), tier.armyExtraMobs.stream() ).forEach( mobDef->{
 			int count = Random.round( mobDef.count * sizeMultiplier );
 			for( int idx = 0; idx < count; ++idx ) {
 				data.undeadArmy.mobsLeft.add( new UndeadArmy.MobInfo( mobDef, MobSpawner.getRandomSpawnPosition( data.undeadArmy ), false ) );
@@ -77,6 +81,7 @@ public class MobSpawner {
 		}
 
 		mobInfo.uuid = mob.getUUID();
+		TierConfig.applyBonus( mob, TierConfig.get( undeadArmy.getLevel(), Vec3.atCenterOf( undeadArmy.position ) ) );
 		MobSpawner.updateWaveHealth( undeadArmy, mobInfo );
 		MobSpawner.tryToLoadEquipment( mob, mobInfo );
 		MobSpawner.addGoals( mob, undeadArmy.position );
