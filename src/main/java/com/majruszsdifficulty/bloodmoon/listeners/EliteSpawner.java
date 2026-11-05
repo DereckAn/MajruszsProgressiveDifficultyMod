@@ -34,9 +34,15 @@ public class EliteSpawner {
 		}
 
 		MobDef elite = Random.next( tier.elites );
-		EntityType< ? > type = elite.type.get();
+		EntityType< ? > type = elite.resolve();
+		if( type == null ) {
+			return; // mob from a mod that is not installed
+		}
 		for( int idx = 0; idx < elite.count; ++idx ) {
-			Entity entity = EntityHelper.createSpawner( ()->type, level ).position( data.entity.position() ).spawn();
+			Entity entity = EntityHelper.createSpawner( ()->type, level )
+				.position( data.entity.position() )
+				.beforeEvent( mob->MobDef.applyBody( mob, elite.scale, elite.healthMultiplier ) )
+				.spawn();
 			if( entity instanceof Mob mob ) {
 				TierConfig.applyBonus( mob, tier );
 				if( elite.equipment != null ) {

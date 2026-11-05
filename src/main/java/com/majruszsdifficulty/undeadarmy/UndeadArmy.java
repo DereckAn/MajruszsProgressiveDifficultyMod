@@ -66,7 +66,9 @@ public class UndeadArmy {
 			.define( "equipment", Reader.optional( Reader.location() ), s->s.equipment, ( s, v )->s.equipment = v )
 			.define( "position", Reader.blockPos(), s->s.position, ( s, v )->s.position = v )
 			.define( "is_boss", Reader.bool(), s->s.isBoss, ( s, v )->s.isBoss = v )
-			.define( "uuid", Reader.optional( Reader.uuid() ), s->s.uuid, ( s, v )->s.uuid = v );
+			.define( "uuid", Reader.optional( Reader.uuid() ), s->s.uuid, ( s, v )->s.uuid = v )
+			.define( "scale", Reader.optional( Reader.number() ), s->s.scale, ( s, v )->s.scale = v )
+			.define( "health_multiplier", Reader.optional( Reader.number() ), s->s.healthMultiplier, ( s, v )->s.healthMultiplier = v );
 	}
 
 	public UndeadArmy() {
@@ -198,10 +200,14 @@ public class UndeadArmy {
 		public BlockPos position;
 		public boolean isBoss = false;
 		public UUID uuid = null;
+		public Float scale;
+		public Float healthMultiplier;
 
 		public MobInfo( UndeadArmyConfig.MobDef def, BlockPos position, boolean isBoss ) {
 			this.type = def.type.get();
 			this.equipment = def.equipment;
+			this.scale = def.scale;
+			this.healthMultiplier = def.healthMultiplier;
 			this.position = position;
 			this.isBoss = isBoss;
 		}

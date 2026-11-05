@@ -10,6 +10,13 @@ import com.majruszsdifficulty.gamestage.GameStageHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -128,9 +135,11 @@ public class UndeadArmyConfig {
 			.define( "exp", Reader.integer(), s->s.experience, ( s, v )->s.experience = Range.of( 0, 1000 ).clamp( v ) );
 
 		Serializables.get( MobDef.class )
-			.define( "type", Reader.entityType(), s->s.type.get(), ( s, v )->s.type = ()->v )
+			.define( "type", Reader.location(), MobDef::getId, MobDef::setId )
 			.define( "equipment", Reader.optional( Reader.location() ), s->s.equipment, ( s, v )->s.equipment = v )
-			.define( "count", Reader.integer(), s->s.count, ( s, v )->s.count = Range.of( 1, 20 ).clamp( v ) );
+			.define( "count", Reader.integer(), s->s.count, ( s, v )->s.count = Range.of( 1, 20 ).clamp( v ) )
+			.define( "scale", Reader.optional( Reader.number() ), s->s.scale, ( s, v )->s.scale = v != null ? Range.of( 0.1f, 16.0f ).clamp( v ) : null )
+			.define( "health_multiplier", Reader.optional( Reader.number() ), s->s.healthMultiplier, ( s, v )->s.healthMultiplier = v != null ? Range.of( 0.1f, 100.0f ).clamp( v ) : null );
 	}
 
 	public static class WaveDef {
@@ -150,9 +159,54 @@ public class UndeadArmyConfig {
 	}
 
 	public static class MobDef {
-		public Supplier< ? extends EntityType< ? > > type;
+		public Supplier< ? extends EntityType< ? > > type; // returns null when the mob's mod is not installed
 		public Identifier equipment;
 		public int count = 1;
+		public Float scale; // Step 7: optional body size (minecraft:scale), e.g. giant skeletons
+		public Float healthMultiplier;
+		private Identifier id; // kept so a missing mod's id survives a config save instead of becoming minecraft:pig
+
+		/** A mob from another mod, spawned only when that mod is installed. */
+		public static MobDef optional( String id, int count ) {
+			MobDef def = new MobDef( ()->null, null, count );
+			def.setId( Identifier.parse( id ) );
+
+			return def;
+		}
+
+		public static void applyBody( Entity entity, Float scale, Float healthMultiplier ) {
+			if( !( entity instanceof LivingEntity living ) ) {
+				return;
+			}
+			if( scale != null && living.getAttribute( Attributes.SCALE ) != null ) {
+				living.getAttribute( Attributes.SCALE ).setBaseValue( scale );
+			}
+			if( healthMultiplier != null && living.getAttribute( Attributes.MAX_HEALTH ) != null ) {
+				AttributeInstance health = living.getAttribute( Attributes.MAX_HEALTH );
+				health.setBaseValue( health.getBaseValue() * healthMultiplier );
+				living.setHealth( living.getMaxHealth() );
+			}
+		}
+
+		public MobDef body( float scale, float healthMultiplier ) {
+			this.scale = scale;
+			this.healthMultiplier = healthMultiplier;
+
+			return this;
+		}
+
+		public @Nullable EntityType< ? > resolve() {
+			return this.type.get();
+		}
+
+		Identifier getId() {
+			return this.id != null ? this.id : BuiltInRegistries.ENTITY_TYPE.getKey( this.type.get() );
+		}
+
+		void setId( Identifier id ) {
+			this.id = id;
+			this.type = ()->BuiltInRegistries.ENTITY_TYPE.getOptional( id ).orElse( null );
+		}
 
 		public MobDef( Supplier< ? extends EntityType< ? > > type, String equipment, int count ) {
 			this.type = type;

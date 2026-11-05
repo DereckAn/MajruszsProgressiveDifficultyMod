@@ -24,29 +24,42 @@ public class TierConfig {
 	private static final AttributeHandler HEALTH = new AttributeHandler( "tier_health_bonus", ()->Attributes.MAX_HEALTH, AttributeModifier.Operation.ADD_MULTIPLIED_BASE );
 	private static final AttributeHandler DAMAGE = new AttributeHandler( "tier_damage_bonus", ()->Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADD_MULTIPLIED_BASE );
 	private static final String ARMY_GEAR = "majruszsdifficulty:undead_army/wave_5_mob";
+	private static final String SKELETON_GEAR = "majruszsdifficulty:undead_army/wave_5_skeleton";
 	public static List< TierDef > TIERS = List.of(
 		new TierDef( GameStage.NORMAL_ID, 0.0f, 1.0f, 0.0f, 0.0f, List.of(), 0.0f, List.of() ),
 		new TierDef( GameStage.EXPERT_ID, 0.0f, 1.25f, 0.0f, 0.0f, List.of(
 			new MobDef( MajruszsDifficulty.CERBERUS_ENTITY ),
-			new MobDef( MajruszsDifficulty.TANK_ENTITY )
+			new MobDef( MajruszsDifficulty.TANK_ENTITY ),
+			giantSkeleton( SKELETON_GEAR, 1 ),
+			MobDef.optional( "mutantmonsters:mutant_zombie", 1 )
 		), 0.05f, List.of(
 			new MobDef( MajruszsDifficulty.CERBERUS_ENTITY ),
 			new MobDef( MajruszsDifficulty.TANK_ENTITY ),
-			new MobDef( EntityTypes.WITHER_SKELETON, null, 1 )
+			new MobDef( EntityTypes.WITHER_SKELETON, null, 1 ),
+			giantSkeleton( null, 1 ),
+			MobDef.optional( "mutantmonsters:mutant_zombie", 1 ),
+			MobDef.optional( "mutantmonsters:mutant_skeleton", 1 )
 		) ),
 		new TierDef( GameStage.MASTER_ID, 0.0f, 1.5f, 0.5f, 0.25f, List.of(
 			new MobDef( EntityTypes.ZOMBIE, ARMY_GEAR, 4 ),
 			new MobDef( EntityTypes.EVOKER, null, 1 ),
 			new MobDef( MajruszsDifficulty.CURSED_ARMOR_ENTITY, null, 3 ),
 			new MobDef( EntityTypes.WITCH, null, 2 ),
-			new MobDef( MajruszsDifficulty.GIANT_ENTITY )
+			new MobDef( MajruszsDifficulty.GIANT_ENTITY ),
+			giantSkeleton( SKELETON_GEAR, 2 ),
+			MobDef.optional( "mutantmonsters:mutant_zombie", 1 ),
+			MobDef.optional( "mutantmonsters:mutant_skeleton", 1 )
 		), 0.1f, List.of(
 			new MobDef( MajruszsDifficulty.CERBERUS_ENTITY ),
 			new MobDef( MajruszsDifficulty.TANK_ENTITY ),
 			new MobDef( MajruszsDifficulty.GIANT_ENTITY ),
 			new MobDef( MajruszsDifficulty.CURSED_ARMOR_ENTITY, null, 2 ),
 			new MobDef( EntityTypes.EVOKER, null, 1 ),
-			new MobDef( EntityTypes.WITCH, null, 1 )
+			new MobDef( EntityTypes.WITCH, null, 1 ),
+			giantSkeleton( null, 1 ),
+			MobDef.optional( "mutantmonsters:mutant_zombie", 1 ),
+			MobDef.optional( "mutantmonsters:mutant_skeleton", 1 ),
+			MobDef.optional( "mutantmonsters:mutant_creeper", 1 )
 		) ),
 		new TierDef( GameStage.MASTER_ID, 300.0f, 2.5f, 1.0f, 0.5f, List.of(
 			new MobDef( EntityTypes.ZOMBIE, ARMY_GEAR, 6 ),
@@ -55,14 +68,24 @@ public class TierConfig {
 			new MobDef( EntityTypes.WITCH, null, 3 ),
 			new MobDef( MajruszsDifficulty.GIANT_ENTITY, null, 2 ),
 			new MobDef( MajruszsDifficulty.CERBERUS_ENTITY, null, 2 ),
-			new MobDef( MajruszsDifficulty.TANK_ENTITY, null, 2 )
+			new MobDef( MajruszsDifficulty.TANK_ENTITY, null, 2 ),
+			giantSkeleton( SKELETON_GEAR, 3 ),
+			MobDef.optional( "mutantmonsters:mutant_zombie", 2 ),
+			MobDef.optional( "mutantmonsters:mutant_skeleton", 2 ),
+			MobDef.optional( "mutantmonsters:mutant_creeper", 1 ),
+			MobDef.optional( "mutantmonsters:mutant_enderman", 1 )
 		), 0.2f, List.of(
 			new MobDef( MajruszsDifficulty.CERBERUS_ENTITY, null, 2 ),
 			new MobDef( MajruszsDifficulty.TANK_ENTITY ),
 			new MobDef( MajruszsDifficulty.GIANT_ENTITY ),
 			new MobDef( MajruszsDifficulty.CURSED_ARMOR_ENTITY, null, 3 ),
 			new MobDef( EntityTypes.EVOKER, null, 2 ),
-			new MobDef( EntityTypes.WITCH, null, 2 )
+			new MobDef( EntityTypes.WITCH, null, 2 ),
+			giantSkeleton( null, 2 ),
+			MobDef.optional( "mutantmonsters:mutant_zombie", 1 ),
+			MobDef.optional( "mutantmonsters:mutant_skeleton", 1 ),
+			MobDef.optional( "mutantmonsters:mutant_creeper", 1 ),
+			MobDef.optional( "mutantmonsters:mutant_enderman", 1 )
 		) )
 	);
 
@@ -79,6 +102,11 @@ public class TierConfig {
 			.define( "undead_army_extra_mobs", Reader.list( Reader.custom( MobDef::new ) ), s->s.armyExtraMobs, ( s, v )->s.armyExtraMobs = v )
 			.define( "blood_moon_elite_chance", Reader.number(), s->s.eliteChance, ( s, v )->s.eliteChance = Range.CHANCE.clamp( v ) )
 			.define( "blood_moon_elites", Reader.list( Reader.custom( MobDef::new ) ), s->s.elites, ( s, v )->s.elites = v );
+	}
+
+	/** A skeleton 2.5x the normal size with 4x its health. */
+	private static MobDef giantSkeleton( String equipment, int count ) {
+		return new MobDef( EntityTypes.SKELETON, equipment, count ).body( 2.5f, 4.0f );
 	}
 
 	/** The last tier in the list whose game stage and difficulty are reached at this position. */

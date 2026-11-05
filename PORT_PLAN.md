@@ -11,9 +11,9 @@ This is the progress file for a multi-session port. **Any Claude Code session wo
 - [x] Step 4: Custom mobs (2026-11-02, mobs and item visuals tested in-game by the user)
 - [x] Step 5: Blood moon visuals (2026-11-02, tested in-game by the user)
 - [x] Step 6: Polish and publish (2026-11-02: release v26.3-1.9.10, library fork DereckAn/MajruszLibrary)
-- [ ] Step 7: Merge with Improved Mobs into one mod (plan in "Step 7 plan"). 7a one jar: done 2026-11-03, tested in-game by the user
+- [ ] Step 7: Merge with Improved Mobs into one mod (plan in "Step 7 plan"). 7a one jar, 7b milestones, 7c tiers: done and tested in-game by the user (uncommitted, user commits only on request)
 
-**Current step:** Step 7b (difficulty milestones). See "Step 7 plan".
+**Current step:** Step 7d (giant skeletons, Mutant Monsters) awaiting in-game test, then 7e (config screen). See "Step 7 plan".
 
 ### Decisions
 - 2026-11-02: user chose to do Step 0 before Step 1.
@@ -152,6 +152,7 @@ Sub-steps; commit and test in-game after each.
 - **7b. Milestones.** Read `DifficultyFetcher.getDifficulty`. Every 10 levels → Undead Army at a player (replaces the kill trigger); every 20 → blood moon on the next night (random chance stays). `mobs_spawn_stronger` follows the difficulty source setting.
 - **7c. Tiers.** Base / Nether visited / End visited + Expert or Master / tier 3 + difficulty > 300: extra elite mobs per wave and in blood moons, more count, more health and damage.
 - **7d. New elites.** "Giant skeleton" as a skeleton with the `minecraft:scale` attribute; Mutant Monsters mobs spawned by registry id only when that mod is installed (no code copied, it's AGPL).
+- 7b–7d notes: milestones live in `*/listeners/DifficultyMilestoneTrigger.java`; tiers in `tiers/TierConfig.java` (config key `tiers.list`, tier = game stage + Improved Mobs difficulty); blood moon elites in `bloodmoon/listeners/EliteSpawner.java`. `MobDef` keeps its id and spawns nothing when the mod is missing (the vanilla registry would return a pig); `scale`/`health_multiplier` make giant skeletons. Test profile has Mutant Monsters 26.3.1 + Puzzles Lib 26.3.17 (Modrinth); Forge Config API Port comes from our jar-in-jar.
 - **7e. Config screen.** In-game screen for the merged settings (check whether Mod Menu has a 26.3 build; otherwise a command or keybind opens it).
 
 ## Step 7 ideas (from the user, 2026-11-02, not planned or implemented yet)

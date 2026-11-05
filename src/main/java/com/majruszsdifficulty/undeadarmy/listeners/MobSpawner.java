@@ -52,13 +52,13 @@ public class MobSpawner {
 		TierConfig.TierDef tier = TierConfig.get( data.undeadArmy.getLevel(), Vec3.atCenterOf( data.undeadArmy.position ) );
 		float sizeMultiplier = ( 1.0f + ( data.undeadArmy.participants.size() - 1 ) * UndeadArmyConfig.EXTRA_PLAYER_RATIO ) * tier.armySizeMultiplier;
 		UndeadArmyConfig.WaveDef waveDef = UndeadArmyConfig.WAVE_DEFS.get( data.undeadArmy.currentWave );
-		Stream.concat( waveDef.mobDefs.stream(), tier.armyExtraMobs.stream() ).forEach( mobDef->{
+		Stream.concat( waveDef.mobDefs.stream(), tier.armyExtraMobs.stream() ).filter( mobDef->mobDef.resolve() != null ).forEach( mobDef->{
 			int count = Random.round( mobDef.count * sizeMultiplier );
 			for( int idx = 0; idx < count; ++idx ) {
 				data.undeadArmy.mobsLeft.add( new UndeadArmy.MobInfo( mobDef, MobSpawner.getRandomSpawnPosition( data.undeadArmy ), false ) );
 			}
 		} );
-		if( waveDef.bossDef != null ) {
+		if( waveDef.bossDef != null && waveDef.bossDef.resolve() != null ) {
 			data.undeadArmy.mobsLeft.add( new UndeadArmy.MobInfo( waveDef.bossDef, MobSpawner.getRandomSpawnPosition( data.undeadArmy ), true ) );
 		}
 		data.undeadArmy.phase.healthTotal = 0;
@@ -74,7 +74,10 @@ public class MobSpawner {
 
 	private static void spawnMob( UndeadArmy undeadArmy, UndeadArmy.MobInfo mobInfo ) {
 		Vec3 position = AnyPos.from( mobInfo.position ).add( 0.0, 0.25, 0.0 ).vec3();
-		Entity entity = EntityHelper.createSpawner( ()->mobInfo.type, undeadArmy.getLevel() ).position( position ).spawn();
+		Entity entity = EntityHelper.createSpawner( ()->mobInfo.type, undeadArmy.getLevel() )
+			.position( position )
+			.beforeEvent( spawned->UndeadArmyConfig.MobDef.applyBody( spawned, mobInfo.scale, mobInfo.healthMultiplier ) )
+			.spawn();
 		if( !( entity instanceof PathfinderMob mob ) ) {
 			undeadArmy.mobsLeft.remove( mobInfo ); // something went wrong, mob could not spawn, and we do not want to block the Undead Army
 			return;
