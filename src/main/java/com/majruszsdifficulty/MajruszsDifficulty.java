@@ -57,9 +57,7 @@ public class MajruszsDifficulty {
 	public static final ModHelper HELPER = ModHelper.create( MOD_ID );
 
 	// Data
-	static {
-		HELPER.config( Config.class ).autoSync().create();
-	}
+	public static final com.majruszlibrary.data.Config CONFIG = HELPER.config( Config.class ).autoSync().create();
 
 	public static final com.majruszlibrary.data.WorldData WORLD_DATA = HELPER.worldData( WorldData.class ).client( WorldData.Client.class ).create();
 

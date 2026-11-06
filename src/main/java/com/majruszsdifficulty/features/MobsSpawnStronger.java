@@ -9,6 +9,7 @@ import com.majruszlibrary.events.base.Condition;
 import com.majruszlibrary.registry.Registries;
 import com.majruszlibrary.text.RegexString;
 import com.majruszsdifficulty.data.Config;
+import com.majruszsdifficulty.data.MergeConfig;
 import com.majruszsdifficulty.gamestage.GameStage;
 import com.majruszsdifficulty.gamestage.GameStageHelper;
 import com.majruszsdifficulty.gamestage.GameStageValue;
@@ -19,7 +20,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import java.util.List;
 
 public class MobsSpawnStronger {
-	private static boolean IS_ENABLED = false; // Step 7: Improved Mobs scales mob stats instead
+	private static boolean IS_ENABLED = true;
 	private static final AttributeHandler HEALTH = new AttributeHandler( "progressive_difficulty_health_bonus", ()->Attributes.MAX_HEALTH, AttributeModifier.Operation.ADD_MULTIPLIED_BASE );
 	private static final AttributeHandler DAMAGE = new AttributeHandler( "progressive_difficulty_damage_bonus", ()->Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADD_MULTIPLIED_BASE );
 	private static GameStageValue< Float > HEALTH_BONUS = GameStageValue.of(
@@ -38,6 +39,7 @@ public class MobsSpawnStronger {
 		OnEntitySpawned.listen( MobsSpawnStronger::boost )
 			.addCondition( Condition.isLogicalServer() )
 			.addCondition( data->IS_ENABLED )
+			.addCondition( data->MergeConfig.isMajruszScalingOn() ) // Step 7: off by default, Improved Mobs scales stats
 			.addCondition( data->!data.isLoadedFromDisk )
 			.addCondition( data->data.entity instanceof Mob mob && DAMAGE.hasAttribute( mob ) )
 			.addCondition( data->EXCLUDED_MOBS.stream().noneMatch( id->id.matches( Registries.ENTITY_TYPES.getId( data.entity.getType() ).toString() ) ) );

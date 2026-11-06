@@ -217,7 +217,8 @@ public class EventCalls {
             flags.enchantGear = true;
         }
         if (!flags.modifyAttributes) {
-            if (!Config.CommonConfig.entityBlacklist.isDisabledFor(living, DifficultyFeatures.ATTRIBUTES)) {
+            if (!Config.CommonConfig.entityBlacklist.isDisabledFor(living, DifficultyFeatures.ATTRIBUTES)
+                    && com.majruszsdifficulty.data.MergeConfig.isImprovedMobsScalingOn()) { // merge: config screen "Mob health/damage scaling"
                 EntityOverridesManager.getInstance().applyAttributesTo(living, map);
             }
             flags.modifyAttributes = true;

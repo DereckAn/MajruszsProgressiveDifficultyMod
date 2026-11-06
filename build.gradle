@@ -10,6 +10,7 @@ base.archivesName = "${mod_archives_name}-fabric"
 repositories {
     mavenLocal() // trimmed Majrusz Library + TenshiLib: `./gradlew publishToMavenLocal` in each repo
     maven { url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven/' } // Forge Config API Port (Improved Mobs configs)
+    maven { url = 'https://maven.terraformersmc.com/releases' } // Mod Menu (optional, opens the config screen)
 }
 
 loom {
@@ -27,6 +28,7 @@ dependencies {
     include "io.github.flemmli97:tenshilib:${tenshilib_version}-fabric"
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api}"
     include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api}"
+    compileOnly "com.terraformersmc:modmenu:${modmenu_version}"
 }
 
 processResources {

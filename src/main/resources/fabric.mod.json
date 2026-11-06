@@ -22,6 +22,9 @@
     ],
     "client": [
       "io.github.flemmli97.improvedmobs.fabric.client.ImprovedMobsFabricClient"
+    ],
+    "modmenu": [
+      "compat.modmenu.ModMenuIntegration"
     ]
   },
   "provides": [

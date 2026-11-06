@@ -15,7 +15,8 @@ public class Config {
 			.define( "undead_army", UndeadArmyConfig.class )
 			.define( "mobs", Mobs.class )
 			.define( "items", Items.class )
-			.define( "tiers", com.majruszsdifficulty.tiers.TierConfig.class );
+			.define( "tiers", com.majruszsdifficulty.tiers.TierConfig.class )
+			.define( "improved_mobs_merge", MergeConfig.class );
 
 		Serializables.getStatic( Features.class );
 
