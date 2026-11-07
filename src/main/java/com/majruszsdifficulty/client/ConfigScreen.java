@@ -4,7 +4,7 @@ import com.majruszlibrary.math.Range;
 import com.majruszsdifficulty.MajruszsDifficulty;
 import com.majruszsdifficulty.bloodmoon.BloodMoonConfig;
 import com.majruszsdifficulty.data.MergeConfig;
-import com.majruszsdifficulty.data.MergeConfig.StatScaling;
+import com.majruszsdifficulty.data.MergeConfig.Difficulty;
 import com.majruszsdifficulty.undeadarmy.UndeadArmyConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -44,26 +44,28 @@ public class ConfigScreen extends Screen {
 		this.appliers.clear();
 		this.layout.addTitleHeader( this.title, this.font );
 
-		GridLayout grid = new GridLayout().columnSpacing( 10 ).rowSpacing( 4 );
+		GridLayout grid = new GridLayout().columnSpacing( 10 ).rowSpacing( 2 );
 		GridLayout.RowHelper rows = grid.createRowHelper( 2 );
 
-		this.label( rows, "Mob health/damage scaling" );
-		CycleButton< StatScaling > scaling = CycleButton.< StatScaling >builder( ConfigScreen::scalingName, MergeConfig.STAT_SCALING )
-			.withValues( StatScaling.values() )
-			.displayOnlyValue()
-			.create( 0, 0, WIDTH, 20, Component.literal( "Mob health/damage scaling" ) );
-		rows.addChild( scaling );
-		this.appliers.add( ()->MergeConfig.STAT_SCALING = scaling.getValue() );
+		this.label( rows, "Difficulty (easiest → Inferno)" );
+		DifficultySlider difficulty = rows.addChild( new DifficultySlider( MergeConfig.DIFFICULTY ) );
+		this.appliers.add( ()->MergeConfig.DIFFICULTY = difficulty.selected() );
 
-		this.label( rows, "Undead Army" );
-		CycleButton< Boolean > army = this.toggle( rows, UndeadArmyConfig.IS_ENABLED );
-		this.appliers.add( ()->UndeadArmyConfig.IS_ENABLED = army.getValue() );
 
 		EditBox armyInterval = this.number( rows, "Army every N difficulty (0 = off)", UndeadArmyConfig.DIFFICULTY_INTERVAL );
 		this.appliers.add( ()->UndeadArmyConfig.DIFFICULTY_INTERVAL = Range.of( 0, 500 ).clamp( parseInt( armyInterval, UndeadArmyConfig.DIFFICULTY_INTERVAL ) ) );
 
 		EditBox armyKills = this.number( rows, "Army after N undead kills (0 = off)", UndeadArmyConfig.KILL_REQUIREMENT );
 		this.appliers.add( ()->UndeadArmyConfig.KILL_REQUIREMENT = Range.of( 0, 1000 ).clamp( parseInt( armyKills, UndeadArmyConfig.KILL_REQUIREMENT ) ) );
+
+		this.label( rows, "Army mobs glow" );
+		CycleButton< Boolean > glow = rows.addChild( CycleButton.booleanBuilder( Component.literal( "Always" ), Component.literal( "After delay" ), UndeadArmyConfig.ALWAYS_HIGHLIGHT )
+			.displayOnlyValue()
+			.create( 0, 0, WIDTH, 20, Component.literal( "Army mobs glow" ) ) );
+		this.appliers.add( ()->UndeadArmyConfig.ALWAYS_HIGHLIGHT = glow.getValue() );
+
+		EditBox totemCost = this.number( rows, "Totem difficulty cost (Improved Mobs)", UndeadArmyConfig.TOTEM_DIFFICULTY_COST );
+		this.appliers.add( ()->UndeadArmyConfig.TOTEM_DIFFICULTY_COST = Range.of( 0, 500 ).clamp( parseInt( totemCost, UndeadArmyConfig.TOTEM_DIFFICULTY_COST ) ) );
 
 		this.label( rows, "Blood moon" );
 		CycleButton< Boolean > bloodMoon = this.toggle( rows, BloodMoonConfig.IS_ENABLED );
@@ -133,11 +135,50 @@ public class ConfigScreen extends Screen {
 		}
 	}
 
-	private static Component scalingName( StatScaling value ) {
+	private static Component difficultyName( Difficulty value ) {
+		return switch( value ) {
+			case MAJRUSZ -> Component.literal( "Majrusz (game stages)" );
+			case GENTLE -> Component.literal( "Gentle" );
+			case STANDARD -> Component.literal( "Standard" );
+			case HARD -> Component.literal( "Hard" );
+			case BRUTAL -> Component.literal( "Brutal" );
+			case INFERNO -> Component.literal( "Inferno" ).withStyle( net.minecraft.ChatFormatting.RED, net.minecraft.ChatFormatting.BOLD );
+		};
+	}
+
+	private static Component difficultyTooltip( Difficulty value ) {
 		return Component.literal( switch( value ) {
-			case IMPROVED_MOBS -> "Improved Mobs";
-			case MAJRUSZ -> "Majrusz (game stages)";
-			case BOTH -> "Both (stacks)";
+			case MAJRUSZ -> "Only Majrusz's game stage bonus. Hit cap and crowd dampening on.";
+			case GENTLE -> "Improved Mobs scaling with half its damage bonus. Hit cap and crowd dampening on.";
+			case STANDARD -> "Improved Mobs scaling. Hit cap and crowd dampening on.";
+			case HARD -> "Improved Mobs scaling. No hit cap; crowd dampening on.";
+			case BRUTAL -> "Improved Mobs + Majrusz scaling stacked. Crowd dampening on.";
+			case INFERNO -> "Both scalings stacked. No limits: no hit cap, no crowd dampening.";
 		} );
+	}
+
+	/** Left to right, easiest to hardest (MergeConfig.Difficulty). Snaps to the steps; the tooltip explains the current one. */
+	private static class DifficultySlider extends net.minecraft.client.gui.components.AbstractSliderButton {
+		private static final int STEPS = Difficulty.values().length - 1;
+
+		DifficultySlider( Difficulty value ) {
+			super( 0, 0, WIDTH, 20, Component.empty(), value.ordinal() / ( double )STEPS );
+			this.updateMessage();
+		}
+
+		Difficulty selected() {
+			return Difficulty.values()[ ( int )Math.round( this.value * STEPS ) ];
+		}
+
+		@Override
+		protected void updateMessage() {
+			this.setMessage( difficultyName( this.selected() ) );
+			this.setTooltip( net.minecraft.client.gui.components.Tooltip.create( difficultyTooltip( this.selected() ) ) );
+		}
+
+		@Override
+		protected void applyValue() {
+			this.value = this.selected().ordinal() / ( double )STEPS;
+		}
 	}
 }

@@ -21,6 +21,7 @@ public class Initializer implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		MajruszsDifficulty.HELPER.register();
+		com.majruszsdifficulty.loot.ExtraChestLoot.register();
 
 		BiomeModifications.addFeature( IS_END, GenerationStep.Decoration.UNDERGROUND_ORES, MajruszsDifficulty.ENDERIUM_ORE_PLACED_FEATURE );
 		BiomeModifications.addFeature( IS_END, GenerationStep.Decoration.UNDERGROUND_ORES, MajruszsDifficulty.ENDERIUM_ORE_LARGE_PLACED_FEATURE );

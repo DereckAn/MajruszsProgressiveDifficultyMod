@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_25",
   "minVersion": "0.8",
   "client": [
+    "MixinAnvilScreen",
     "MixinClientLevel",
     "MixinFirstPersonHandsAndItemsRenderer",
     "MixinHumanoidModel",
@@ -12,6 +13,8 @@
   ],
   "mixins": [
     "IMixinCreeper",
+    "MixinAnvilMenu",
+    "MixinLivingEntity",
     "IMixinLootTable",
     "IMixinUniformContainerBase"
   ],

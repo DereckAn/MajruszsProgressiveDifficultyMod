@@ -112,6 +112,13 @@ public class UndeadArmy {
 		this.forEachSpawnedUndead( entity->entity.addEffect( new MobEffectInstance( MobEffects.GLOWING, TimeHelper.toTicks( 15.0 ), 0 ) ) );
 	}
 
+	/** Banishing Totem: removes the army's mobs (no drops, no rewards) and ends it. */
+	public void banish() {
+		this.forEachSpawnedUndead( entity->entity.discard() );
+		this.mobsLeft.clear();
+		this.finish();
+	}
+
 	public void killAllMobs() {
 		this.forEachSpawnedUndead( entity->entity.kill( this.getLevel() ) );
 		this.mobsLeft.clear();

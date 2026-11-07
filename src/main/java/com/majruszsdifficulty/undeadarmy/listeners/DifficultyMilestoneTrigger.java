@@ -34,6 +34,16 @@ public class DifficultyMilestoneTrigger {
 		}
 	}
 
+	/** Banishing Totem: no difficulty-triggered army for this player until their difficulty rises by `levels`. */
+	public static void postpone( ServerPlayer player, int levels ) {
+		if( UndeadArmyConfig.DIFFICULTY_INTERVAL <= 0 ) {
+			return;
+		}
+		double difficulty = DifficultyFetcher.getDifficulty( player.level(), player.position() );
+		int milestone = ( int )( ( difficulty + levels ) / UndeadArmyConfig.DIFFICULTY_INTERVAL );
+		Serializables.modify( new Milestone(), EntityHelper.getOrCreateExtraTag( player ), stored->stored.value = Math.max( stored.value, milestone ) );
+	}
+
 	public static class Milestone {
 		public int value = 0;
 	}

@@ -31,6 +31,9 @@ public class UndeadArmyConfig {
 	public static int AREA_RADIUS = 70;
 	public static int KILL_REQUIREMENT = 0; // Step 7: 0 = off, armies come from Improved Mobs difficulty milestones
 	public static int DIFFICULTY_INTERVAL = 10;
+	public static boolean ALWAYS_HIGHLIGHT = false; // Step 7: army mobs glow for the whole wave, not only after highlight_delay
+	public static int TOTEM_POSTPONE_LEVELS = 30;
+	public static int TOTEM_DIFFICULTY_COST = 5;
 	public static int KILL_REQUIREMENT_FIRST = 25;
 	public static int KILL_REQUIREMENT_WARNING = 3;
 	public static List< WaveDef > WAVE_DEFS = List.of(
@@ -124,6 +127,9 @@ public class UndeadArmyConfig {
 			.define( "area_radius", Reader.integer(), ()->AREA_RADIUS, v->AREA_RADIUS = Range.of( 35, 140 ).clamp( v ) )
 			.define( "kill_requirement", Reader.integer(), ()->KILL_REQUIREMENT, v->KILL_REQUIREMENT = Range.of( 0, 1000 ).clamp( v ) )
 			.define( "difficulty_interval", Reader.integer(), ()->DIFFICULTY_INTERVAL, v->DIFFICULTY_INTERVAL = Range.of( 0, 500 ).clamp( v ) )
+			.define( "always_highlight", Reader.bool(), ()->ALWAYS_HIGHLIGHT, v->ALWAYS_HIGHLIGHT = v )
+			.define( "totem_postpone_levels", Reader.integer(), ()->TOTEM_POSTPONE_LEVELS, v->TOTEM_POSTPONE_LEVELS = Range.of( 0, 500 ).clamp( v ) )
+			.define( "totem_difficulty_cost", Reader.integer(), ()->TOTEM_DIFFICULTY_COST, v->TOTEM_DIFFICULTY_COST = Range.of( 0, 500 ).clamp( v ) )
 			.define( "kill_requirement_first", Reader.integer(), ()->KILL_REQUIREMENT_FIRST, v->KILL_REQUIREMENT_FIRST = Range.of( 1, 1000 ).clamp( v ) )
 			.define( "kill_requirement_warning", Reader.integer(), ()->KILL_REQUIREMENT_WARNING, v->KILL_REQUIREMENT_WARNING = Range.of( 1, 1000 ).clamp( v ) )
 			.define( "waves", Reader.list( Reader.custom( WaveDef::new ) ), ()->WAVE_DEFS, v->WAVE_DEFS = v );

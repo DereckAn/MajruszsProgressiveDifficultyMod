@@ -128,6 +128,7 @@ public class MajruszsDifficulty {
 	public static final RegistryObject< TatteredArmor > TATTERED_LEGGINGS_ITEM = item( "tattered_leggings", TatteredArmor.leggings() );
 	public static final RegistryObject< UndeadBattleStandard > UNDEAD_BATTLE_STANDARD_ITEM = item( "undead_battle_standard", UndeadBattleStandard::new );
 	public static final RegistryObject< WitherSword > WITHER_SWORD_ITEM = item( "wither_sword", WitherSword::new );
+	public static final RegistryObject< com.majruszsdifficulty.items.BanishingTotem > BANISHING_TOTEM_ITEM = item( "banishing_totem", com.majruszsdifficulty.items.BanishingTotem::new );
 
 	// Items (blocks)
 	public static final RegistryObject< EnderiumBlock.Item > ENDERIUM_BLOCK_ITEM = item( "enderium_block", EnderiumBlock.Item::new );

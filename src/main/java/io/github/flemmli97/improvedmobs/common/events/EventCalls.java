@@ -227,9 +227,9 @@ public class EventCalls {
 
     public static float hurtEvent(LivingEntity entity, DamageSource source, float dmg) {
         if (source.is(DamageTypeTags.IS_PROJECTILE) && source.getEntity() instanceof Monster)
-            return (float) (dmg * (EntityFlags.get(source.getEntity()).getAttribute(EntityFlags.ServerSideAttributes.PROJECTILE_DAMAGE_MULTIPLIER)));
+            return (float) (dmg * (1 + (EntityFlags.get(source.getEntity()).getAttribute(EntityFlags.ServerSideAttributes.PROJECTILE_DAMAGE_MULTIPLIER) - 1) * com.majruszsdifficulty.data.MergeConfig.improvedMobsDamageFactor())); // merge: "Gentle" step
         if (source.is(DamageTypeTags.IS_EXPLOSION) && source.getEntity() instanceof Monster)
-            return (float) (dmg * (EntityFlags.get(source.getEntity()).getAttribute(EntityFlags.ServerSideAttributes.EXPLOSION_DAMAGE_MULTIPLIER)));
+            return (float) (dmg * (1 + (EntityFlags.get(source.getEntity()).getAttribute(EntityFlags.ServerSideAttributes.EXPLOSION_DAMAGE_MULTIPLIER) - 1) * com.majruszsdifficulty.data.MergeConfig.improvedMobsDamageFactor())); // merge: "Gentle" step
         if (entity instanceof Monster) {
             if (source.is(DamageTypeTags.WITCH_RESISTANT_TO))
                 return (float) (dmg * (1 - EntityFlags.get(entity).getAttribute(EntityFlags.ServerSideAttributes.MAGIC_RESISTANCE)));

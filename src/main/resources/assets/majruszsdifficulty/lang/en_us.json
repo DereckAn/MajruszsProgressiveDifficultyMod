@@ -189,5 +189,13 @@
   "advancements.progressive_difficulty.ender_dragon_treasure_bag.title": "The End of the End?",
   "advancements.progressive_difficulty.ender_dragon_treasure_bag.description": "Open an Ender Dragon Treasure Bag",
   "advancements.progressive_difficulty.warden_treasure_bag.title": "Master of Silence",
-  "advancements.progressive_difficulty.warden_treasure_bag.description": "Open a Warden Treasure Bag"
+  "advancements.progressive_difficulty.warden_treasure_bag.description": "Open a Warden Treasure Bag",
+  "item.majruszsdifficulty.banishing_totem": "Totem of Banishing",
+  "item.majruszsdifficulty.banishing_totem.item_tooltip1": "Use to banish the nearby Undead Army.",
+  "item.majruszsdifficulty.banishing_totem.item_tooltip2": "With no army nearby, no army comes for the next %s difficulty levels.",
+  "item.majruszsdifficulty.banishing_totem.item_tooltip3": "Costs +%s Improved Mobs difficulty.",
+  "item.majruszsdifficulty.banishing_totem.banished": "The Undead Army has been banished!",
+  "item.majruszsdifficulty.banishing_totem.postponed": "No Undead Army will come for the next %s difficulty levels.",
+  "item.majruszsdifficulty.banishing_totem.cost": "The world grows darker... (+%s difficulty)",
+  "majruszsdifficulty.earned_health": "+%s max hearts (%s earned)"
 }

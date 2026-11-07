@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "gbg",
+    "btb",
+    "gbg"
+  ],
+  "key": {
+    "g": "minecraft:gold_block",
+    "b": "minecraft:bone_block",
+    "t": "minecraft:totem_of_undying"
+  },
+  "result": {
+    "count": 1,
+    "id": "majruszsdifficulty:banishing_totem"
+  }
+}

@@ -48,7 +48,10 @@ public class DifficultyAttributeProperty {
             AttributeInstance inst = entity.getAttribute(entry.getKey());
             if (inst == null || inst.getModifier(Utils.ATTRIBUTE_ID) != null)
                 continue;
-            inst.addPermanentModifier(new AttributeModifier(Utils.ATTRIBUTE_ID, entry.getValue().expression().value().get(map), entry.getValue().operation()));
+            double value = entry.getValue().expression().value().get(map);
+            if (entry.getKey().value() == Attributes.ATTACK_DAMAGE.value())
+                value *= com.majruszsdifficulty.data.MergeConfig.improvedMobsDamageFactor(); // merge: "Gentle" difficulty step
+            inst.addPermanentModifier(new AttributeModifier(Utils.ATTRIBUTE_ID, value, entry.getValue().operation()));
             if (entry.getKey().value() == Attributes.MAX_HEALTH.value())
                 entity.setHealth(entity.getMaxHealth());
         }

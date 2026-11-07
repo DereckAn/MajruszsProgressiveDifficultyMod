@@ -10,7 +10,7 @@ public class MobHighlighter {
 		OnUndeadArmyTicked.listen( MobHighlighter::highlight )
 			.addCondition( data->TimeHelper.haveSecondsPassed( 4.0 ) )
 			.addCondition( data->data.undeadArmy.phase.state == UndeadArmy.Phase.State.WAVE_ONGOING )
-			.addCondition( data->data.undeadArmy.phase.getTicksActive() >= TimeHelper.toTicks( UndeadArmyConfig.HIGHLIGHT_DELAY ) );
+			.addCondition( data->UndeadArmyConfig.ALWAYS_HIGHLIGHT || data.undeadArmy.phase.getTicksActive() >= TimeHelper.toTicks( UndeadArmyConfig.HIGHLIGHT_DELAY ) );
 	}
 
 	private static void highlight( OnUndeadArmyTicked data ) {
